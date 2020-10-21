@@ -54,6 +54,13 @@ int SENSFI = A1;              // Entrada analógica para el sensor de flujo Insp
 int SENSFE = A0;              // Entrada analógica para el sensor de flujo Espiratorio
 int SENSO2 = A3;              // Entrada analógica para el sensor de O2
 
+// ******************************* Alarmas **************************************************************
+unsigned int Alarma = 0;
+#define BIT_SET(a,b) ((a) |= (1ULL<<(b)))
+#define BIT_CLEAR(a,b) ((a) &= ~(1ULL<<(b)))
+#define BIT_FLIP(a,b) ((a) ^= (1ULL<<(b)))
+#define BIT_CHECK(a,b) (!!((a) & (1ULL<<(b))))        // '!!' to make sure this returns 0 or 1
+
 // ******************************* Variables de control del ciclo respiratorio **************************
 int Periodo =1000;            // Duración del ciclo en milisegundos
 int DurEsp = 500;             // Duracion de la Espiración en mseg
@@ -272,8 +279,8 @@ void loop() {
 
   tact = micros();
   paso = tact - tant;
-    
-  leeserie();   // ******************************* LEE LA LINEA SERIE ******************************
+// ******************************* LEE LA LINEA SERIE ******************************    
+  leeserie();   
 
   // ********************************************* CADA MILISEGUNDO ************************************************
     if (paso >= 1000) {    
@@ -282,10 +289,14 @@ void loop() {
       DurEsp = PorcEsp * (Periodo / 100);             // Calcula la duracion de la espiración DurEsp
       DurIns = Periodo - DurEsp;
       peakFlow = (float)Vset_ml/(float)Tinsp*60.0;    // peakFlow in lpm
+      
+      // **************************** LEE LOS SENSORES ***************************************
+      leesensores();
  
        if (Marcha) {  // *********************** COMIENZA MARCHA *************************************************************
         contPaso++;                                   // Incrementa el contador de pasos
-        
+        inspVol_ml += (inspFlow_lm  * 0.1667);          // Integra el flujo inspiratorio
+        //if (inspVol_ml > 9000) inspVol_ml = 9000;
         // ************************************* Inicia ESPIRACION ***********************************************************
         if (contPaso < DurEsp){
           bandInsp = false;                                             // Señala al PC que entramos en espiración
@@ -312,6 +323,8 @@ void loop() {
                 break; } 
               }                 // Fin de TriggerMode
             }                   // Fin de si la presión está próxima a la PEEP
+            if (Press_H2O < PEEP_H2O-2.0) BIT_SET(Alarma, 2); //Alarma de peep más bajo de un 1cm del set
+            if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
           }                     // Fin de que solo acúa en la tercera fase de la inspiracion
         }                       // Fin de la ESPIRACION
         
@@ -321,7 +334,8 @@ void loop() {
           myservo.write(esplow);                                      // Cierra Válvula Espiratoria
                  //if (inspVol_ml > Vmax_ml)   RS{setAlarm();}        // Si se alcanza el volumen maximo absoluto da alarma
                  //if(Press_mmHg > Pmax_H2O)  {setAlarm(); }          // Si se supera la presión máxima Da alarma
-
+          if (inspVol_ml > Vmax_ml)   BIT_SET(Alarma, 0);  // Si se alcanza el volumen maximo absoluto da alarma
+          if (Press_H2O > Pmax_H2O)   BIT_SET(Alarma, 1);   // Si se supera la presión máxima Da alarma
           // SWITCH MODO DE OPERACION *****************************************************************************************         
           switch(operationMode){   
              // CONTROL POR PRESIÓN *********************************************************
@@ -364,15 +378,14 @@ void loop() {
       }
       paso = 0;
       tant = micros();
-
-      leesensores();          // **************************** LEE LOS SENSORES ***************************************
+      
       
     } // *************************** Fin de cada mseg ****************************
 
     // ***************************** Cada centesima de segundo *******************
     if (contmseg >= 10) {
       contcseg++;  
-              enviadatos();   // ********************** ENVIA DATOS AL PC *********************************************
+      enviadatos();   // ********************** ENVIA DATOS AL PC *********************************************
       contmseg = 0; }
  
     // *****************************   Cada decima de segundo  *******************
@@ -419,6 +432,16 @@ void leeserie(){
 
     if (StrS[0] == 'R' && StrS[1] == 'S' && StrS[2] == 'P') {
        switch(StrS[3]){
+          case 'B': {  //lee MAX PIP **********************************************************
+            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
+            d = a + b + c;    Pmax_H2O = d;  
+          break; }
+          case 'C': {  //lee max Vt **********************************************************
+            a = (int(StrS[4]) - 48) * 1000;  b = (int(StrS[5]) - 48) * 100; c = (int(StrS[6]) - 48)*10;
+            e = (int(StrS[7]) - 48);
+            d = a + b + c + e;    Vmax_ml = d;  
+          break; }
+          
           case 'F': {  //lee frecuencia **********************************************************
             a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
             d = a + b + c;    Freq = d;  
@@ -470,6 +493,9 @@ void leeserie(){
             a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
             d = a + b + c;    Complianza = d;
           break; }
+          case 'X': {
+            Alarma = 0;
+            break; }
        }
        StrS = "";
        SFin = false;
@@ -495,17 +521,16 @@ void leesensores(){
         if (Press_H2O < -20) Press_H2O = -20;
         inspFlow_lm = flow[sensFI] * 1.24137;           // Calcula el flujo inspiratorio
          if (inspFlow_lm < 0) inspFlow_lm = 0;
-        inspVol_ml += (inspFlow_lm  * 0.1667);          // Integra el flujo inspiratorio
-        if (inspVol_ml > 9000) inspVol_ml = 9000;
         expFlow_lm = flow[sensFE];                      // Calcula el flujo espiratorio
        } 
 }
 
 // **************************** ENVIA DATOS AL PC ************************************************************
 void enviadatos(){    // Envía datos cada 20 mseg dependiendo de bandenvio
-     
       // if(bandenvio == 0){    
         sprintf(sinfo, "%01d%01d%01d%02d", Marcha, operationMode, TriggerMode, Freq); 
+        Sm.concat(sinfo);
+        sprintf(sinfo, "%02d%04d", (int) Pmax_H2O, (int) Vmax_ml);
         Sm.concat(sinfo);
         sprintf(sinfo, "%02d%02d%02d", 100-PorcEsp, (int)PEEP_H2O, (int)Pset_H2O); 
         Sm.concat(sinfo);
@@ -513,9 +538,9 @@ void enviadatos(){    // Envía datos cada 20 mseg dependiendo de bandenvio
         Sm.concat(sinfo);
         sprintf(sinfo, "%03d%04d%03d", (int)expFlow_lm*10, (int)inspVol_ml, (int)FiO2); 
         Sm.concat(sinfo);
-        sprintf(sinfo, "%04d%01d", (int)Tinsp, bandInsp); 
+        sprintf(sinfo, "%04d%01d%01d", (int)Tinsp, bandInsp, Alarma); 
         Sm.concat(sinfo);
-        if(Sm.length() == 36){ Serial.println (Sm); }
+        if(Sm.length() == 43){ Serial.println (Sm); }
         Sm = "";
         bandenvio = 1;
       // }

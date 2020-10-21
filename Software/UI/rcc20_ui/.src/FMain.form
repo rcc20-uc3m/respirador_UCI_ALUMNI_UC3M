@@ -164,7 +164,7 @@
     Text = ("PARO")
   }
   { BSalir Button
-    MoveScaled(21,16,12,5)
+    MoveScaled(4,21,16,4)
     Text = ("SALIR")
   }
   { TBHora TextBox
@@ -183,15 +183,17 @@
     Text = ("-")
   }
   { BCPres Button
-    MoveScaled(41,14,12,4)
+    MoveScaled(21,13,12,4)
     Text = ("Presion")
   }
   { BCVol Button
-    MoveScaled(41,18,12,4)
-    Text = ("Volumen")
+    MoveScaled(121,0,12,4)
+    Enabled = False
+    Ignore = True
+    Border = False
   }
   { Label11 Label
-    MoveScaled(41,12,10,2)
+    MoveScaled(21,11,10,2)
     Text = ("CONTROL:")
   }
   { TextLabel1 TextLabel
@@ -205,19 +207,19 @@
     Text = ("RESPIRADOR")
   }
   { BTrig0 Button
-    MoveScaled(55,13,10,4)
+    MoveScaled(34,13,10,4)
     Text = ("Sin trigger")
   }
   { BTrig1 Button
-    MoveScaled(55,17,10,4)
+    MoveScaled(34,17,10,4)
     Text = ("Presion")
   }
   { BTrig2 Button
-    MoveScaled(55,21,10,4)
+    MoveScaled(34,21,10,4)
     Text = ("Volumen")
   }
   { Ltrig Label
-    MoveScaled(55,10,8,4)
+    MoveScaled(34,10,8,4)
     Text = ("TRIGGER")
   }
   { Label4 Label
@@ -249,19 +251,72 @@
     Text = ("Comp. Dinamica")
   }
   { BCFlow Button
-    MoveScaled(41,22,12,4)
-    Text = ("Flujo")
+    MoveScaled(21,17,12,4)
+    Text = ("Volumen")
   }
   { BtinspMas Button
-    MoveScaled(104,62,10,8)
+    MoveScaled(117,62,6.875,5)
     Text = ("T Insp +")
   }
   { BtinspMenos Button
-    MoveScaled(104,80,10,8)
+    MoveScaled(103,62,6.875,5)
     Text = ("T Insp -")
   }
   { TBTinsp TextBox
-    MoveScaled(105,72,8,6)
+    MoveScaled(110,62,6.875,5)
     Alignment = Align.Center
+  }
+  { TBPMAX TextBox
+    MoveScaled(108,71,11,5)
+    Font = Font["Bold,+3"]
+    Foreground = Color.Gray
+    Alignment = Align.Center
+  }
+  { TBVMAX TextBox
+    MoveScaled(108,79,11,5)
+    Font = Font["Bold,+3"]
+    Foreground = Color.Gray
+    Alignment = Align.Center
+  }
+  { BPmaxMenos Button
+    MoveScaled(103,71,5,5)
+    Font = Font["+5"]
+    Text = ("-")
+  }
+  { BVolMenos Button
+    MoveScaled(103,79,5,5)
+    Font = Font["+5"]
+    Text = ("-")
+  }
+  { BPmaxMas Button
+    MoveScaled(119,71,5,5)
+    Font = Font["+5"]
+    Text = ("+")
+  }
+  { BVolMas Button
+    MoveScaled(119,79,5,5)
+    Font = Font["+5"]
+    Text = ("+")
+  }
+  { Label13 Label
+    MoveScaled(107,68,12,3)
+    Text = ("P max")
+    Alignment = Align.Center
+  }
+  { Label14 Label
+    MoveScaled(107,76,12,3)
+    Text = ("Vol Max")
+    Alignment = Align.Center
+  }
+  { TXAlarm TextArea
+    MoveScaled(46,13,18,12)
+  }
+  { Ltrig2 Label
+    MoveScaled(46,10,8,4)
+    Text = ("ALARMAS")
+  }
+  { BResetAlarm Button
+    MoveScaled(65,13,7,12)
+    Text = ("Reset\nAlarm")
   }
 }

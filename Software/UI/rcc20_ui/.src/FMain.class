@@ -1,5 +1,24 @@
 ' Gambas class file
 
+Private AlarmDescription As String[] = ["Volumen Tidal Alto", "Presión Inspiratoria Alta", "PEEP Insuficiente", "Volumen Tidal Bajo"]
+
+Public Const maxPinp As Integer = 80
+Public Const minPinp As Integer = 0
+Public Const maxPeep As Integer = 20
+Public Const minPeep As Integer = 0
+Public Const maxVol As Integer = 1000
+Public Const minVol As Integer = 200
+Public Const maxFreq As Integer = 20
+Public Const minFreq As Integer = 6
+Public Const maxPorcInspir As Integer = 60
+Public Const minPorcInspir As Integer = 10
+Public Const maxPmax As Integer = 100
+Public Const minPmax As Integer = 0
+Public Const maxVolMax As Integer = 1200
+Public Const minVolMax As Integer = 400
+Public Const N_ALARM As Integer = 4
+
+
 Public TextLX00 As Label            ' can hold the address of the object
 Public TextLXmx As Label            ' can hold the address of the object
 
@@ -54,6 +73,9 @@ Public Vtidal As Integer
 Public FiO2 As Integer
 Public bandInsp As Integer
 Public bandInspAnt As Integer
+Public PipMax As Integer
+Public VtMax As Integer
+Public Alarma As Integer
 
 Public PrInspMax As Float 
 Public PrInspMed As Float
@@ -88,7 +110,7 @@ Public Sub Form_Open()
     COMPort1.Open()
   If Error Then
     Message("No Serial COMPort1 Exiting...")
-    'Quit
+    Quit
   Endif
  Debug "COMprt1 ABIERTA"
  
@@ -100,6 +122,7 @@ Public Sub Form_Open()
  BCPres.Enabled = False
  BStop.Enabled = False
  BTrig0.Enabled = False
+ InspVolMax = 0
  'RBControlPr_Click() NO funciona para habilitar por defecto ese boton al inicio
  PintaGraf() 
  'Draw.Begin(FMain.Gr2)
@@ -275,24 +298,27 @@ Public Sub Decod(st As String)
   Dim MaxY1 As Integer
   Dim MaxY2 As Integer
   Dim s As String
+  Dim i As Integer
   'Debug "InputBuffer= "; COMPort1.InputBufferSize
-  If Len(st) = 37 Then   '& (Left(st, 1) = "F"))
+  If Len(st) = 44 Then   '& (Left(st, 1) = "F"))
       Marcha = Val(Mid(st, 1, 1))
       ControlMode = Val(Mid(st, 2, 1))
       TriggerMode = Val(Mid(st, 3, 1))
       Freq = Val(Mid(st, 4, 2))
-      PorcInsp = Val(Mid(st, 6, 2))
-      PEEP = Val(Mid(st, 8, 2))
-      PIP = Val(Mid(st, 10, 2))
-      Vtidal = Val(Mid(st, 12, 4))
-      Pr = CFloat(Val(Mid(st, 16, 3))) / 10.0
-      Fi = CFloat(Val(Mid(st, 19, 3))) / 10.0
-      Fe = CFloat(Val(Mid(st, 22, 3))) / 10.0
-      InspVol = Val(Mid(st, 25, 4))
-      FiO2 = Val(Mid(st, 29, 3)) 
-      Tinsp = Val(Mid(st, 32, 4)) 
-      bandInsp = Val(Mid(st, 36, 1))
-      'Debug Tinsp
+      PipMax = Val(Mid(st, 6, 2))
+      VtMax = Val(Mid(st, 8, 4))
+      PorcInsp = Val(Mid(st, 12, 2))
+      PEEP = Val(Mid(st, 14, 2))
+      PIP = Val(Mid(st, 16, 2))
+      Vtidal = Val(Mid(st, 18, 4))
+      Pr = CFloat(Val(Mid(st, 22, 3))) / 10.0
+      Fi = CFloat(Val(Mid(st, 25, 3))) / 10.0
+      Fe = CFloat(Val(Mid(st, 28, 3))) / 10.0
+      InspVol = Val(Mid(st, 31, 4))
+      FiO2 = Val(Mid(st, 35, 3)) 
+      Tinsp = Val(Mid(st, 38, 4)) 
+      bandInsp = Val(Mid(st, 42, 1))
+      Alarma = Val(Mid(st, 43, 1))
       
       ' ********************************************** INICIO INSPIRACION *************************************************
       If bandInspAnt = 0 And bandInsp = 1 Then    ' ENTRAMOS EN INSPIRACION **********************************************
@@ -349,10 +375,18 @@ Public Sub Decod(st As String)
       TBCompEst.text = Format(CompEst, "#.#")
       TBCompDin.text = Format(CompDin, "#.#")
       TBTinsp.text = Tinsp
-      
-      Debug Vtidal
-     
       TBHora.text = Format(Now, "dd/mm/yyyy h:n:s")
+      TBPMAX.text = PipMax
+      TBVMAX.text = VtMax
+      s = ""
+      For i = 0 To N_ALARM - 1
+        If BTst(Alarma, i) Then
+          s = s & AlarmDescription[i] & "\n"
+        Endif
+      Next
+      
+      TXAlarm.text = s
+      
       'TBHora.text = Now
       
       TBFiO2.text = FiO2
@@ -391,35 +425,35 @@ Public Sub BStop_Click()
 End
 
 Public Sub BVtidalMas_Click()
-  Print #COMPort1, "RSPV"; Format((Vtidal + 50), "0000")     ' NO FUNCIONA CON CRLF
+  If Vtidal < maxVol Then Print #COMPort1, "RSPV"; Format((Vtidal + 50), "0000")     ' NO FUNCIONA CON CRLF
 End
 
 Public Sub BVTidalMenos_Click()
-  Print #COMPort1, "RSPV"; Format((Vtidal - 50), "0000")   ' NO FUNCIONA CON CRLF
+  If Vtidal > minVol Then Print #COMPort1, "RSPV"; Format((Vtidal - 50), "0000")   ' NO FUNCIONA CON CRLF
 End
 
 Public Sub BPEEPmas_Click()
- Print #COMPort1, "RSPE"; Format((PEEP * 10) + 10, "000") 
+ If PEEP < maxPeep Then Print #COMPort1, "RSPE"; Format((PEEP * 10) + 10, "000")
 End
 
 Public Sub BPEEPmenos_Click()
-  Print #COMPort1, "RSPE"; Format((PEEP * 10) - 10, "000") 
+  If PEEP > minPeep Then Print #COMPort1, "RSPE"; Format((PEEP * 10) - 10, "000") 
 End
 
 Public Sub BPorcInspmas_Click()
-  Print #COMPort1, "RSPS"; Format((PorcInsp) + 10, "000") 
+  If PorcInsp < maxPorcInspir Then Print #COMPort1, "RSPS"; Format((PorcInsp) + 10, "000") 
 End
 
 Public Sub BPorcInspmenos_Click()
-  Print #COMPort1, "RSPS"; Format((PorcInsp) - 10, "000") 
+  If PorcInsp > minPorcInspir Then Print #COMPort1, "RSPS"; Format((PorcInsp) - 10, "000") 
 End
 
 Public Sub BPrMas_Click()
-   Print #COMPort1, "RSPG"; Format((PIP) + 1, "000") 
+   If PIP < maxPinp Then Print #COMPort1, "RSPG"; Format((PIP) + 1, "000") 
 End
 
 Public Sub BPrMenos_Click()
-   Print #COMPort1, "RSPG"; Format((PIP) - 1, "000") 
+   If PIP > minPinp Then Print #COMPort1, "RSPG"; Format((PIP) - 1, "000") 
 End
 
 Public Sub BSalir_Click()
@@ -427,11 +461,11 @@ Public Sub BSalir_Click()
 End
 
 Public Sub BFreqMas_Click()
-  Print #COMPort1, "RSPF"; Format(Freq + 1, "000")
+  If Freq < maxFreq Then Print #COMPort1, "RSPF"; Format(Freq + 1, "000")
 End
 
 Public Sub BFreqMenos_Click()
-    Print #COMPort1, "RSPF"; Format(Freq - 1, "000")
+    If Freq > minFreq Then Print #COMPort1, "RSPF"; Format(Freq - 1, "000")
 End
 
 Public Sub BCPres_Click()
@@ -482,4 +516,24 @@ End
 
 Public Sub BtinspMenos_Click()
   Print #COMPort1, "RSPI"; Format((Tinsp - 50), "0000")   
+End
+
+
+Public Sub BPmaxMenos_Click()
+  If PipMax > minPmax Then Print #COMPort1, "RSPB"; Format((PipMax - 5), "000")
+End
+Public Sub BPmaxMas_Click()
+  If PipMax < maxPmax Then Print #COMPort1, "RSPB"; Format((PipMax + 5), "000")
+End
+
+Public Sub BVolMenos_Click()
+  If VtMax > minVolMax Then Print #COMPort1, "RSPC"; Format((VtMax - 10), "0000")
+End
+
+Public Sub BVolMas_Click()
+  If VtMax < maxVolMax Then Print #COMPort1, "RSPC"; Format((VtMax + 10), "0000")
+End
+
+Public Sub BResetAlarm_Click()
+  Print #COMPort1, "RSPX"
 End

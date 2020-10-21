@@ -1,0 +1,179 @@
+(ExpressProject ""
+  (ProjectVersion "19981106")
+  (ProjectType "PCB - PSpice")
+  (Folder "Design Resources"
+    (Folder "Library")
+    (File ".\respirador hggm-uc3m.dsn"
+      (Type "Schematic Design"))
+    (BuildFileAddedOrDeleted "x")
+    (CompileFileAddedOrDeleted "x")
+    (NoModify)
+    (ANNOTATE_Scope "0")
+    (ANNOTATE_Mode "1")
+    (ANNOTATE_Action "0")
+    (Annotate_Page_Order "1")
+    (ANNOTATE_Reset_References_to_1 "FALSE")
+    (ANNOTATE_No_Page_Number_Change "FALSE")
+    (ANNOTATE_Property_Combine "{Value}{Source Package}{POWER_GROUP}")
+    (ANNOTATE_IncludeNonPrimitive "TRUE")
+    (ANNOTATE_PreserveDesignator "FALSE")
+    (ANNOTATE_PreserveUserEdits "TRUE")
+    (ANNOTATE_Refdes_Control_Required "FALSE")
+    (Update_Instace_for_External_Design "FALSE")
+    (Annotate_type "Default")
+    (width_pages "100")
+    (width_start "80")
+    (width_End "80")
+    (Netlist_TAB "3")
+    (LAYOUT_Netlist_File "RESPIRADOR HGGM-UC3M.MNL")
+    (LAYOUT_PCB_Footprint "{PCB Footprint}")
+    (TRUE)
+    (LAYOUT_Units "0")
+    (TRUE)
+    (TRUE)
+    (TRUE)
+    (TRUE)
+    ( "TRUE"))
+  (Folder "Outputs"
+    (File ".\respirador hggm-uc3m.mnl"
+      (Type "LAYOUT Netlist File")))
+  (Folder "Referenced Projects")
+  (Folder "PSpice Resources"
+    (Folder "Model Libraries"
+      (Sort User))
+    (Folder "Stimulus Files"
+      (Sort User))
+    (Folder "Include Files"
+      (Sort User))
+    (Folder "Simulation Profiles"))
+  (PartMRUSelector
+    (LED-0805-RED
+      (FullPartName "LED-0805-RED.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-OPTOE.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 2X2"
+      (FullPartName "HEADER 2X2.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-CONNECTR.OLB")
+      (DeviceIndex "0"))
+    (VCC_CIRCLE
+      (LibraryName "C:\CADENCE\SPB_16.6\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0"))
+    ("JUMPER 2"
+      (FullPartName "JUMPER 2.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-CONNECTR.OLB")
+      (DeviceIndex "0"))
+    ("BJT NPN"
+      (FullPartName "BJT NPN.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-TRANSISTOR.OLB")
+      (DeviceIndex "0"))
+    (CR-0805
+      (FullPartName "CR-0805.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-PASSIVES.OLB")
+      (DeviceIndex "0"))
+    (BUZZER
+      (FullPartName "BUZZER.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-PASSIVES.OLB")
+      (DeviceIndex "0"))
+    ("MOLEX 6"
+      (FullPartName "MOLEX 6.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-CONNECTR.OLB")
+      (DeviceIndex "0"))
+    ("ARDUINO DUE"
+      (FullPartName "ARDUINO DUED.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-DIGITAL.OLB")
+      (DeviceIndex "3"))
+    ("MOLEX 2"
+      (FullPartName "MOLEX 2.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-CONNECTR.OLB")
+      (DeviceIndex "0"))
+    ("MOLEX 4"
+      (FullPartName "MOLEX 4.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-CONNECTR.OLB")
+      (DeviceIndex "0"))
+    (DRV8825-BRD
+      (FullPartName "DRV8825-BRD.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-POWER.OLB")
+      (DeviceIndex "0"))
+    (CR-2512
+      (FullPartName "CR-2512.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-PASSIVES.OLB")
+      (DeviceIndex "0"))
+    ("DIODE ES1D"
+      (FullPartName "DIODE ES1D.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-DIODE.OLB")
+      (DeviceIndex "0"))
+    (CR-0603
+      (FullPartName "CR-0603.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-PASSIVES.OLB")
+      (DeviceIndex "0"))
+    (TLV1701
+      (FullPartName "TLV1701.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-ANALOG.OLB")
+      (DeviceIndex "0"))
+    ("BJT NPN DARLINGTON BDX53"
+      (FullPartName "BJT NPN DARLINGTON BDX53.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-TRANSISTOR.OLB")
+      (DeviceIndex "0"))
+    (GND_DIGI
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-CAPSYM.OLB")
+      (DeviceIndex "0"))
+    ("DC/DC SIMPLE REC15E-Z"
+      (FullPartName "DC/DC SIMPLE REC15E-Z.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-POWER.OLB")
+      (DeviceIndex "0"))
+    (LED-0805-GRN
+      (FullPartName "LED-0805-GRN.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-OPTOE.OLB")
+      (DeviceIndex "0"))
+    (CR-1206
+      (FullPartName "CR-1206.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-PASSIVES.OLB")
+      (DeviceIndex "0"))
+    ("JUMPER 3"
+      (FullPartName "JUMPER 3.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-CONNECTR.OLB")
+      (DeviceIndex "0"))
+    (HEATSINK
+      (FullPartName "HEATSINK.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-POWER.OLB")
+      (DeviceIndex "0"))
+    ("CHOKE BLM41PG102SN1"
+      (FullPartName "CHOKE BLM41PG102SN1.Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-PASSIVES.OLB")
+      (DeviceIndex "0"))
+    ("LT3080 (TO220)"
+      (FullPartName "LT3080 (TO220).Normal")
+      (LibraryName "F:\ELECTRONICA\HARDWARE\ORCAD\CAPTURE\EGA-POWER.OLB")
+      (DeviceIndex "0")))
+  (GlobalState
+    (FileView
+      (Path "Design Resources")
+      (Path "Design Resources" ".\respirador hggm-uc3m.dsn")
+      (Path "Design Resources" ".\respirador hggm-uc3m.dsn" "B0 Block Diagram")
+      (Path "Design Resources" ".\respirador hggm-uc3m.dsn" "B1 Alimentacion")
+      (Path "Design Resources" ".\respirador hggm-uc3m.dsn" "B2 CPU")
+      (Path "Design Resources" ".\respirador hggm-uc3m.dsn"
+         "B3 Acondicionamiento Sensores")
+      (Path "Design Resources" ".\respirador hggm-uc3m.dsn"
+         "B4 Control Electrovalvulas")
+      (Path "Outputs")
+      (Select "Design Resources" ".\respirador hggm-uc3m.dsn"))
+    (HierarchyView)
+    (Doc
+      (Type "COrCapturePMDoc")
+      (Frame
+        (Placement "44 2 3 -1 -1 -4 -30 0 200 0 420"))
+      (Tab 0))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -4 -30 22 1712 29 487")
+        (Scroll "-240 0")
+        (Zoom "100")
+        (Occurrence "/Alimentacion"))
+      (Path
+         "C:\DOCUMENTS AND SETTINGS\JUANBALA\ESCRITORIO\ORCAD\RESPIRADOR HGGM-UC3M.DSN")
+      (Schematic "B1 Alimentacion")
+      (Page "B1")))
+  (LastUsedLibraryBrowseDirectory "F:\Electronica\Hardware\OrCAD\Capture")
+  (ISPCBBASICLICENSE "false"))

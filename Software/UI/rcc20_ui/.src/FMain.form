@@ -1,0 +1,267 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,133,91)
+  Font = Font["-1"]
+  Maximized = True
+  { Gr1 DrawingArea
+    MoveScaled(4,27,76,31)
+    Cached = True
+  }
+  { Gr2 DrawingArea
+    MoveScaled(4,58,76,31)
+    Cached = True
+  }
+  { COMPort1 #SerialPort
+    #MoveScaled(0,1)
+    FlowControl = SerialPort.None
+    Speed = 115200
+  }
+  { BMarcha Button
+    MoveScaled(4,13,16,4)
+    Text = ("MARCHA")
+  }
+  { TBFreq TextBox
+    MoveScaled(86,6,13,11)
+    Font = Font["Sans Serif,Bold,+10"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { Label1 Label
+    MoveScaled(87,6,4,3)
+    Text = ("RPM")
+  }
+  { TBPres TextBox
+    MoveScaled(82,17,21,13)
+    Font = Font["Sans Serif,Bold,+13"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { TBPIP TextBox
+    MoveScaled(87,43,11,5)
+    Font = Font["Bold,+3"]
+    Foreground = Color.Gray
+    Alignment = Align.Center
+  }
+  { TBPrMax TextBox
+    MoveScaled(82,30,21,13)
+    Font = Font["Sans Serif,Bold,+13"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { TBPEEP TextBox
+    MoveScaled(108,43,11,5)
+    Font = Font["Loma,Bold,+5"]
+    Foreground = Color.Gray
+    Alignment = Align.Center
+  }
+  { TBVolT TextBox
+    MoveScaled(87,83,11,5)
+    Font = Font["Bold,+3"]
+    Foreground = Color.Gray
+    Alignment = Align.Center
+  }
+  { TBInspVol TextBox
+    MoveScaled(82,70,21,13)
+    Font = Font["Sans Serif,Bold,+11"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { Label5 Label
+    MoveScaled(83,17,5,3)
+    Text = ("Pr.Med")
+  }
+  { Label6 Label
+    MoveScaled(83,30,6,3)
+    Text = ("Pr.Max")
+  }
+  { TBFiO2 TextBox
+    MoveScaled(103,17,21,13)
+    Font = Font["Sans Serif,Bold,+13"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { BVtidalMas Button
+    MoveScaled(98,83,5,5)
+    Font = Font["Bold,+5"]
+    Text = ("+")
+  }
+  { BVTidalMenos Button
+    MoveScaled(82,83,5,5)
+    Font = Font["Bold,+5"]
+    Text = ("-")
+  }
+  { TBFiMax TextBox
+    MoveScaled(82,62,11,8)
+    Font = Font["+3"]
+    Alignment = Align.Center
+  }
+  { Label7 Label
+    MoveScaled(83,62,6,3)
+    Text = ("Fi Max")
+  }
+  { TBFeMax TextBox
+    MoveScaled(93,62,10,8)
+    Font = Font["+3"]
+    Alignment = Align.Center
+  }
+  { Label9 Label
+    MoveScaled(94,62,6,3)
+    Text = ("Fe Max")
+  }
+  { Label10 Label
+    MoveScaled(104,17,5,3)
+    Text = ("FiO2")
+  }
+  { BPEEPmas Button
+    MoveScaled(119,43,5,5)
+    Font = Font["+5"]
+    Text = ("+")
+  }
+  { BPEEPmenos Button
+    MoveScaled(103,43,5,5)
+    Font = Font["+5"]
+    Text = ("-")
+  }
+  { TBPrEsp TextBox
+    MoveScaled(103,30,21,13)
+    Font = Font["Sans Serif,Bold,+13"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { TBInspEsp TextBox
+    MoveScaled(107,6,13,11)
+    Font = Font["Sans Serif,Bold,+10"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { Label8 Label
+    MoveScaled(108,6,5,3)
+    Text = ("% Insp")
+  }
+  { BPorcInspmas Button
+    MoveScaled(120,6,4,11)
+    Font = Font["+5"]
+    Text = ("+")
+  }
+  { BPorcInspmenos Button
+    MoveScaled(103,6,4,11)
+    Font = Font["+5"]
+    Text = ("-")
+  }
+  { BPrMas Button
+    MoveScaled(98,43,5,5)
+    Font = Font["+5"]
+    Text = ("+")
+  }
+  { BPrMenos Button
+    MoveScaled(82,43,5,5)
+    Font = Font["+5"]
+    Text = ("-")
+  }
+  { BStop Button
+    MoveScaled(4,17,16,4)
+    Text = ("PARO")
+  }
+  { BSalir Button
+    MoveScaled(21,16,12,5)
+    Text = ("SALIR")
+  }
+  { TBHora TextBox
+    MoveScaled(31,5,27,4)
+    Font = Font["+3"]
+    Alignment = Align.Center
+  }
+  { BFreqMas Button
+    MoveScaled(99,6,4,11)
+    Font = Font["+5"]
+    Text = ("+")
+  }
+  { BFreqMenos Button
+    MoveScaled(82,6,4,11)
+    Font = Font["+5"]
+    Text = ("-")
+  }
+  { BCPres Button
+    MoveScaled(41,14,12,4)
+    Text = ("Presion")
+  }
+  { BCVol Button
+    MoveScaled(41,18,12,4)
+    Text = ("Volumen")
+  }
+  { Label11 Label
+    MoveScaled(41,12,10,2)
+    Text = ("CONTROL:")
+  }
+  { TextLabel1 TextLabel
+    MoveScaled(4,4,19,7)
+    Font = Font["Bold,+10"]
+    Text = ("RCC20")
+  }
+  { TextLabel2 TextLabel
+    MoveScaled(5,3,18,3)
+    Font = Font["Bold,+1"]
+    Text = ("RESPIRADOR")
+  }
+  { BTrig0 Button
+    MoveScaled(55,13,10,4)
+    Text = ("Sin trigger")
+  }
+  { BTrig1 Button
+    MoveScaled(55,17,10,4)
+    Text = ("Presion")
+  }
+  { BTrig2 Button
+    MoveScaled(55,21,10,4)
+    Text = ("Volumen")
+  }
+  { Ltrig Label
+    MoveScaled(55,10,8,4)
+    Text = ("TRIGGER")
+  }
+  { Label4 Label
+    MoveScaled(83,70,6,2)
+    Text = ("V. Tidal")
+  }
+  { Label3 Label
+    MoveScaled(104,30,6,2)
+    Text = ("PEEP")
+  }
+  { TBCompEst TextBox
+    MoveScaled(82,49,21,12)
+    Font = Font["Bold,+8"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { Label2 Label
+    MoveScaled(83,49,12,3)
+    Text = ("Comp. Estatica")
+  }
+  { TBCompDin TextBox
+    MoveScaled(103,49,21,12)
+    Font = Font["Bold,+8"]
+    Foreground = &H0050A0&
+    Alignment = Align.Center
+  }
+  { Label12 Label
+    MoveScaled(104,49,14,3)
+    Text = ("Comp. Dinamica")
+  }
+  { BCFlow Button
+    MoveScaled(41,22,12,4)
+    Text = ("Flujo")
+  }
+  { BtinspMas Button
+    MoveScaled(104,62,10,8)
+    Text = ("T Insp +")
+  }
+  { BtinspMenos Button
+    MoveScaled(104,80,10,8)
+    Text = ("T Insp -")
+  }
+  { TBTinsp TextBox
+    MoveScaled(105,72,8,6)
+    Alignment = Align.Center
+  }
+}

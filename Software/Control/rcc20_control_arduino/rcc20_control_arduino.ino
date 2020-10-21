@@ -527,7 +527,6 @@ void leesensores(){
 
 // **************************** ENVIA DATOS AL PC ************************************************************
 void enviadatos(){    // Envía datos cada 20 mseg dependiendo de bandenvio
-      // if(bandenvio == 0){    
         sprintf(sinfo, "%01d%01d%01d%02d", Marcha, operationMode, TriggerMode, Freq); 
         Sm.concat(sinfo);
         sprintf(sinfo, "%02d%04d", (int) Pmax_H2O, (int) Vmax_ml);
@@ -538,12 +537,9 @@ void enviadatos(){    // Envía datos cada 20 mseg dependiendo de bandenvio
         Sm.concat(sinfo);
         sprintf(sinfo, "%03d%04d%03d", (int)expFlow_lm*10, (int)inspVol_ml, (int)FiO2); 
         Sm.concat(sinfo);
-        sprintf(sinfo, "%04d%01d%01d", (int)Tinsp, bandInsp, Alarma); 
+        sprintf(sinfo, "%04d%01d%c", (int)Tinsp, bandInsp, (char) Alarma); 
         Sm.concat(sinfo);
         if(Sm.length() == 43){ Serial.println (Sm); }
         Sm = "";
-        bandenvio = 1;
-      // }
-      // else bandenvio = 0;
 }
  

@@ -318,7 +318,7 @@ Public Sub Decod(st As String)
       FiO2 = Val(Mid(st, 35, 3)) 
       Tinsp = Val(Mid(st, 38, 4)) 
       bandInsp = Val(Mid(st, 42, 1))
-      Alarma = Val(Mid(st, 43, 1))
+      Alarma = Asc(Mid(st, 43, 1))
       
       ' ********************************************** INICIO INSPIRACION *************************************************
       If bandInspAnt = 0 And bandInsp = 1 Then    ' ENTRAMOS EN INSPIRACION **********************************************

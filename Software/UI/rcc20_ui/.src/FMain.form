@@ -186,12 +186,6 @@
     MoveScaled(21,13,12,4)
     Text = ("Presion")
   }
-  { BCVol Button
-    MoveScaled(121,0,12,4)
-    Enabled = False
-    Ignore = True
-    Border = False
-  }
   { Label11 Label
     MoveScaled(21,11,10,2)
     Text = ("CONTROL:")

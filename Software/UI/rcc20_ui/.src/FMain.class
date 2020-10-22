@@ -471,21 +471,13 @@ End
 Public Sub BCPres_Click()
   Print #COMPort1, "RSPL000"      '; Chr$(13); Chr$(10);
   BCPres.Enabled = False
-  BCVol.Enabled = True
   BCFlow.Enabled = True
 End
 
-Public Sub BCVol_Click()
-  Print #COMPort1, "RSPL001"      '; Chr$(13); Chr$(10);
-  BCPres.Enabled = True
-  BCVol.Enabled = False
-  BCFlow.Enabled = True
-End
 
 Public Sub BCFlow_Click()
-  Print #COMPort1, "RSPL002"      '; Chr$(13); Chr$(10);
+  Print #COMPort1, "RSPL001"      '; Chr$(13); Chr$(10);
   BCPres.Enabled = True
-  BCVol.Enabled = True
   BCFlow.Enabled = False
 End
 

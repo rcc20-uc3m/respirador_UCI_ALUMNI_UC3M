@@ -39,7 +39,6 @@
 
 #define PRS_CTRL 0            // Define el modo de control por presión
 #define VOL_CTRL 1            // Define el modo de control por volumen
-#define FLW_CTRL 2            // Define el modo de control por flujo del volumen
 #define TRIG_PR 1             // Trigger (disparo) por presión
 #define TRIG_VO 2             // Trigger (disparo) por volumen
 #define SIN_TRIG 0            // Sin trigger
@@ -186,7 +185,7 @@ float Vset_ml = 300.00;       // volumen deseado para control por volumen
 float Vmax_ml = 700.00;       // por encima de este valor se levanta la alarma
 
 //int esplimit = 180;         // Valor del límite de la valvula espiratoria
-int esplimit = 45;            // Valor del límite de la valvula espiratoria con Complianza Baja  REVISARLO !!!!!!!!!!!
+int esplimit = 50;            // Valor del límite de la valvula espiratoria con Complianza Baja  REVISARLO !!!!!!!!!!!
 int esplow = 0;              // Valor del límite inferior de la valvula espiratoria
 
 //******************************** Variables de los PID ****************************************************
@@ -199,21 +198,15 @@ double flowSet, flowIn, flowOut;        // Peak_Flow
 int angulo;                             // Angulo del servo de la Valvula de espiracion
 
 // COEFICIENTES DEL PID DE PRESION *********************
-double pressKp=100, pressKi=10, pressKd=1;
-
+double pressKp=10, pressKi=0, pressKd=0;
 // COEFICIENTES DEL PID DE VOLUMEN *********************
-double volKp=0.445, volKi=0, volKd=0;
-
-// COEFICIENTES DEL PID DE FLUJO *********************
-double flowKp=100, flowKi=10, flowKd=0;
-
+double flowKp=5, flowKi=0, flowKd=0;
 // COEFICIENTES DEL PID DE LA VALVULA ESPIRATORIA ******
-double serKp= 15, serKi = 0, serKd = 0;  // Para complianza normal
-//double serKp= 15, serKi = 0, serKd = 15;  // Para complianza disminuida
+double serKp= 80, serKi = 0, serKd = 0;  // Para complianza normal
+
 
 //**********************************++++ Crea los controles PID ******************************************************************
 PID pressPID(&pressIn, &pressOut, &pressSet, pressKp, pressKi, pressKd, DIRECT);
-PID volPID(&volIn, &volOut, &volSet, volKp, volKi, volKd, DIRECT);
 PID flowPID(&flowIn, &flowOut, &flowSet, flowKp, flowKi, flowKd, DIRECT);
 PID servoPID(&presIn, &angOut, &peepSet, serKp, serKi, serKd, REVERSE);
 
@@ -229,8 +222,6 @@ void setup() {
 
   
   Serial.begin(115200);                     // Con 230400 baudios no funciona
-  //Serial1.begin(115200);                     // Con 230400 baudios no funciona
-  //Serial1.begin(230400);                   // No funciona el puerto de ubuntu solo llega a 115200
 
   StrS.reserve(50);                          // Reserva 50 caracteres para Strs
   Sm.reserve(100);                           // reserva 100 caracteres para Sm
@@ -239,38 +230,24 @@ void setup() {
   contPaso = 0;                              // Inicializa el contador de pasos
 
   pressPID.SetMode(AUTOMATIC);               // Configura el PID de presión en automatico
-  //pressPID.SetSampleTime(10);                // Tiempo de muestreo 10 mseg Para el Due
-  pressPID.SetSampleTime(1);               // Tiempo de muestreo 1 mseg
+  pressPID.SetSampleTime(10);               // Tiempo de muestreo 1 mseg
   pressPID.SetOutputLimits(100,255);         // Limita la salida entre 100 y 255 (100 valvula insp cerrada, 255   
 
-  volPID.SetMode(AUTOMATIC);                 // Configura el PID de volumen en automatico
-  //volPID.SetSampleTime(10);                // Tiempo de muestreo 10 mseg
-  volPID.SetSampleTime(1);                   // Tiempo de muestreo 1 mseg
-  volPID.SetOutputLimits(100,255);           // Limita la salida entre 100 y 255 (100 valvula insp cerrada, 255 abierta del todo)
+  flowPID.SetMode(AUTOMATIC);                // Configura el PID del control del peakFlow
+  flowPID.SetSampleTime(10);                  // Tiempo de muestreo 1 mseg
+  flowPID.SetOutputLimits(100,255);          // Limita la salida entre 100 y 255 (100 valvula insp cerrada, 255 abierta del todo)
 
   servoPID.SetMode(AUTOMATIC);               // Configura el PID de valvula de espiración
-  servoPID.SetSampleTime(1);                 // Tiempo de muestreo 1 mseg
+  servoPID.SetSampleTime(10);                 // Tiempo de muestreo 1 mseg
   servoPID.SetOutputLimits(esplow,esplimit); // Limita la salida entre esplow y esplimit (esplow cerrada, esplimit abierta del todo)
-  
-  flowPID.SetMode(AUTOMATIC);                // Configura el PID del control del peakFlow
-  flowPID.SetSampleTime(1);                  // Tiempo de muestreo 1 mseg
-  flowPID.SetOutputLimits(100,255);          // Limita la salida entre 100 y 255 (100 valvula insp cerrada, 255 abierta del todo)
   
   Tinsp = 500;                               // Establece Tinsp a 500 mseg. Tiempo da apertura de la val insp en control peakflow
 
-  Serial.println("COMIENZO");
+  //Serial.println("COMIENZO");
   //Serial1.println("COMIENZO");
   analogWrite (ANINSP,0);                    // Cierra la válvula inspiratoria analógica
   
   operationMode = PRS_CTRL;                  // Establece el modo de operación en control por presión
-  
-  
-  pressKp=300, pressKi=100, pressKd=1;                  // COEFICIENTES DEL PID DE PRESION *********************
-  volKp=0.445, volKi=0, volKd=0;                        // COEFICIENTES DEL PID DE VOLUMEN *********************
-  flowKp=100, flowKi=50, flowKd=5;                      // COEFICIENTES DEL PID DE FLUJO *********************
-  //serKp= 100, serKi = 0, serKd = 0; esplimit = 15;      // Coeficientes del PID ESPIRACION para complianza Baja
-  serKp= 15, serKi = 0, serKd = 0; esplimit = 180;     // Coeficientes del PID ESPIRACION para complianza alta
-  //serKp= 15, serKi = 0, serKd = 15; esplimit = 180;
 }
 // *********************    FIN Inicializacion ***************************************
 
@@ -295,7 +272,6 @@ void loop() {
  
        if (Marcha) {  // *********************** COMIENZA MARCHA *************************************************************
         contPaso++;                                   // Incrementa el contador de pasos
-        inspVol_ml += (inspFlow_lm  * 0.1667);          // Integra el flujo inspiratorio
         //if (inspVol_ml > 9000) inspVol_ml = 9000;
         // ************************************* Inicia ESPIRACION ***********************************************************
         if (contPaso < DurEsp){
@@ -323,7 +299,7 @@ void loop() {
                 break; } 
               }                 // Fin de TriggerMode
             }                   // Fin de si la presión está próxima a la PEEP
-            if (Press_H2O < PEEP_H2O-2.0) BIT_SET(Alarma, 2); //Alarma de peep más bajo de un 1cm del set
+            if (Press_H2O < PEEP_H2O-2.0) BIT_SET(Alarma, 2); //Alarma de peep más bajo de un 2cm del set
             if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
           }                     // Fin de que solo acúa en la tercera fase de la inspiracion
         }                       // Fin de la ESPIRACION
@@ -332,38 +308,28 @@ void loop() {
         if (contPaso >= DurEsp) {
           bandInsp = true;
           myservo.write(esplow);                                      // Cierra Válvula Espiratoria
-                 //if (inspVol_ml > Vmax_ml)   RS{setAlarm();}        // Si se alcanza el volumen maximo absoluto da alarma
-                 //if(Press_mmHg > Pmax_H2O)  {setAlarm(); }          // Si se supera la presión máxima Da alarma
           if (inspVol_ml > Vmax_ml)   BIT_SET(Alarma, 0);  // Si se alcanza el volumen maximo absoluto da alarma
           if (Press_H2O > Pmax_H2O)   BIT_SET(Alarma, 1);   // Si se supera la presión máxima Da alarma
           // SWITCH MODO DE OPERACION *****************************************************************************************         
           switch(operationMode){   
              // CONTROL POR PRESIÓN *********************************************************
              case PRS_CTRL: {  
-                if (Press_H2O >= Pset_H2O ){analogWrite(ANINSP,0);}   // Si alcanza el set de presión cierra la válvula inspiratoria
-                else {                                                // Si no se ha alcanzado Pset calcula PID
+                //if (Press_H2O >= Pset_H2O ){analogWrite(ANINSP,0);}   // Si alcanza el set de presión cierra la válvula inspiratoria
+                //else {                                                // Si no se ha alcanzado Pset calcula PID
                   pressSet = Pset_H2O; pressIn = Press_H2O; pressPID.Compute();               
-                  analogWrite(ANINSP,pressOut); }                     // Actualiza la salida de la valvula
+                  analogWrite(ANINSP,pressOut); 
+                 //}                     // Actualiza la salida de la valvula
              break;}   
              // FIN DE CONTROL POR PRESION ****************************************************
  
              // CONTROL POR VOLUMEN ***********************************************************
              case VOL_CTRL: {   
-                 if(inspVol_ml >= Vset_ml){analogWrite(ANINSP,0);}    // Si alcanza el set de volumen cierra la válvula inspiratoria 
-                 else {                                               // Si no se ha alcanzado Vset Calcula PID
-                    volSet = Vset_ml;  volIn = inspVol_ml;  volPID.Compute();
-                    analogWrite(ANINSP,volOut); }                     // Actualiza la salida de la valvula
-             break; }    
-             // FIN DE CONTROL POR VOLUMEN  **************************************************
-             
-             // CONTROL POR FLUJO DEL VOLUMEN ***********************************************************
-             case FLW_CTRL: {   
                  if(inspVol_ml >= Vset_ml){analogWrite(ANINSP,0);}    // Si alcanza el set de volumen Cierra válv. inspiratoria 
                  else {                                               // Si no se ha alcanzado Vset Calcula PID
                     flowSet = peakFlow;  flowIn = inspFlow_lm;  flowPID.Compute();
                     analogWrite(ANINSP,flowOut);}                     // Actualiza la salida de la valvula
              break; }    
-             // FIN DE CONTROL POR FLUJO  **************************************************
+             // FIN DE CONTROL POR VOLUMEN  **************************************************
           }
         }
         // Fin del Periodo **************************************************************
@@ -385,7 +351,8 @@ void loop() {
     // ***************************** Cada centesima de segundo *******************
     if (contmseg >= 10) {
       contcseg++;  
-      enviadatos();   // ********************** ENVIA DATOS AL PC *********************************************
+      enviadatos();   
+      // ********************** ENVIA DATOS AL PC *********************************************
       contmseg = 0; }
  
     // *****************************   Cada decima de segundo  *******************
@@ -520,7 +487,8 @@ void leesensores(){
         if (Press_H2O > 100) Press_H2O = 100;
         if (Press_H2O < -20) Press_H2O = -20;
         inspFlow_lm = flow[sensFI] * 1.24137;           // Calcula el flujo inspiratorio
-         if (inspFlow_lm < 0) inspFlow_lm = 0;
+        if (inspFlow_lm < 0) inspFlow_lm = 0;
+        inspVol_ml += (inspFlow_lm  * 0.1667);          // Integra el flujo inspiratorio
         expFlow_lm = flow[sensFE];                      // Calcula el flujo espiratorio
        } 
 }

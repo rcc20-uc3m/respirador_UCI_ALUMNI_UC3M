@@ -206,9 +206,10 @@ Dim n1 As Integer                                          ' Variable para cálc
     Endif
   Next
   '****************************************** PINTA GRAFICAS ***********************************
-  Draw.LineWidth = 2
+  Draw.LineWidth = 1
   Draw.Foreground = colorG1
-  Draw.Line(x1, (FMain.Gr1.Height - (FMain.Gr1.Height / 3)), x1, (FMain.Gr1.Height - (yA * FY)))
+  'Draw.Line(x1, (FMain.Gr1.Height - (FMain.Gr1.Height / 3)), x1, (FMain.Gr1.Height - (yA * FY)))
+  Draw.Line(x1 - 1, (FMain.Gr1.Height - (y1Aant * FY)), x1, (FMain.Gr1.Height - (yA * FY)))
   Draw.End
   y1Aant = yA
 End
@@ -237,7 +238,7 @@ Dim n1 As Integer                                          ' Variable para cálc
   TextLXmx.X = FMain.Gr2.X + Gr2.Width - 30
   TextLXmx.Y = FMain.Gr2.Y + FMain.Gr2.Height
   
-  n += 1
+ ' n += 1
   x1 = n
 
   Draw.Begin(FMain.Gr2)
@@ -254,12 +255,14 @@ Dim n1 As Integer                                          ' Variable para cálc
     Endif
   Next
   '****************************************** PINTA GRAFICAS ***********************************
-  Draw.LineWidth = 2
+  Draw.LineWidth = 1
   Draw.Foreground = colorG1
-  Draw.Line(x1, (FMain.Gr2.Height - (FMain.Gr2.Height / 2)), x1, (FMain.Gr2.Height - (yA * FY)))
+  'Draw.Line(x1, (FMain.Gr2.Height - (FMain.Gr2.Height / 2)), x1, (FMain.Gr2.Height - (yA * FY)))
+  Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Aant * FY)), x1, (FMain.Gr2.Height - (yA * FY)))
   Draw.Foreground = colorG2
-  Draw.Line(x1, (FMain.Gr2.Height - (FMain.Gr2.Height / 2)), x1, (FMain.Gr2.Height - (yB * FY)))
-  Draw.LineWidth = 2
+  Draw.LineWidth = 1
+  'Draw.Line(x1, (FMain.Gr2.Height - (FMain.Gr2.Height / 2)), x1, (FMain.Gr2.Height - (yB * FY)))
+  Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Bant * FY)), x1, (FMain.Gr2.Height - (yB * FY)))
   Draw.End
 
   y2Aant = yA
@@ -300,7 +303,7 @@ Public Sub Decod(st As String)
   Dim s As String
   Dim i As Integer
   'Debug "InputBuffer= "; COMPort1.InputBufferSize
-  If Len(st) = 44 Then   '& (Left(st, 1) = "F"))
+  If Len(st) = 43 Then   '& (Left(st, 1) = "F"))
       Marcha = Val(Mid(st, 1, 1))
       ControlMode = Val(Mid(st, 2, 1))
       TriggerMode = Val(Mid(st, 3, 1))
@@ -318,7 +321,7 @@ Public Sub Decod(st As String)
       FiO2 = Val(Mid(st, 35, 3)) 
       Tinsp = Val(Mid(st, 38, 4)) 
       bandInsp = Val(Mid(st, 42, 1))
-      Alarma = Asc(Mid(st, 43, 1))
+      'Alarma = Asc(Mid(st, 43, 1))
       
       ' ********************************************** INICIO INSPIRACION *************************************************
       If bandInspAnt = 0 And bandInsp = 1 Then    ' ENTRAMOS EN INSPIRACION **********************************************
@@ -391,16 +394,16 @@ Public Sub Decod(st As String)
       
       TBFiO2.text = FiO2
       
-      MaxX = 9999
+      MaxX = 2000
       MinX = 0
       MaxY1 = 75
       Maxy2 = 200
       
-      pinta1P(1, MaxY1, 10, Pr + MaxY1 / 3, 0, 0, 0)   
+      pinta1P(5, MaxY1, 10, Pr + MaxY1 / 3, 0, 0, 0)   
       pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, 0, 0) 
       NumPunto = NumPunto + 1
       
-      If NumPunto > 5000 Then ' Antes 2500
+      If NumPunto > 2000 Then ' Antes 2500
         ' Read #COMPort1, s, Lof(COMPort1)      'Lee los caracteres disponibles en COMPort1 ¡ LIMPIA EL BUFFER DEL COMPort1 !
         'Debug st
         NumPunto = 0 

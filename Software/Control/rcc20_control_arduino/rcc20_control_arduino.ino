@@ -106,6 +106,15 @@ unsigned long contPaso;       // contador para el periodo de latido
 unsigned long contSens;       // contador de sensor
 unsigned long contO2;         // contador del sensor de O2
 
+// *************************** VARIABLES PARA PROMEDIOS ****************************************
+float f_sensFI = 0.0;
+float f_sensFE = 0.0;
+float f_sensP = 0.0;
+uint n_samples = 10;
+float alpha = 0.0;
+float beta = 0.0;
+
+
 // ***************************************+ LOOK UP TABLE PARA EL FLUJO ***********************************************************
 float flow[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0187,0.072,
@@ -185,7 +194,7 @@ float Vset_ml = 300.00;       // volumen deseado para control por volumen
 float Vmax_ml = 700.00;       // por encima de este valor se levanta la alarma
 
 //int esplimit = 180;         // Valor del límite de la valvula espiratoria
-int esplimit = 50;            // Valor del límite de la valvula espiratoria con Complianza Baja  REVISARLO !!!!!!!!!!!
+int esplimit = 60;            // Valor del límite de la valvula espiratoria con Complianza Baja  REVISARLO !!!!!!!!!!!
 int esplow = 0;              // Valor del límite inferior de la valvula espiratoria
 
 //******************************** Variables de los PID ****************************************************
@@ -198,17 +207,39 @@ double flowSet, flowIn, flowOut;        // Peak_Flow
 int angulo;                             // Angulo del servo de la Valvula de espiracion
 
 // COEFICIENTES DEL PID DE PRESION *********************
-double pressKp=10, pressKi=0, pressKd=0;
+double pressKp=40, pressKi=5, pressKd=2;
 // COEFICIENTES DEL PID DE VOLUMEN *********************
 double flowKp=5, flowKi=0, flowKd=0;
 // COEFICIENTES DEL PID DE LA VALVULA ESPIRATORIA ******
-double serKp= 80, serKi = 0, serKd = 0;  // Para complianza normal
+double serKp= 30, serKi = 0, serKd = 0;  // Para complianza normal
 
 
 //**********************************++++ Crea los controles PID ******************************************************************
 PID pressPID(&pressIn, &pressOut, &pressSet, pressKp, pressKi, pressKd, DIRECT);
 PID flowPID(&flowIn, &flowOut, &flowSet, flowKp, flowKi, flowKd, DIRECT);
 PID servoPID(&presIn, &angOut, &peepSet, serKp, serKi, serKd, REVERSE);
+
+
+int n_puntos = 9;
+float xFI[] = {97, 124, 156, 440, 672, 773, 819, 846, 852};
+float yFI[] = {0, 2.28, 4.66, 27.4, 56.5, 80.5, 97.2, 108.1, 110.0};
+float xFE[] = {85, 110, 139, 413, 639, 738, 788, 805, 810, };
+
+float interpLineal(int n, float pos, float* X, float* Y){
+    for(int i = 0; i < n_puntos-1; i++){
+        if ((X[i] < pos) && (pos < X[i+1])){
+            return yFI[i] + (pos - X[i])/(X[i+1]-X[i])*(Y[i+1]-Y[i]);
+        }
+    }
+    return 0;
+}
+float getFI(float pos){
+    return interpLineal(n_puntos, pos, xFI, yFI);
+}
+float getFE(float pos){
+    return interpLineal(n_puntos, pos, xFE, yFI);
+}
+
 
 
 // **********************************               Rutina de inicializacion           ****************************************************
@@ -243,9 +274,21 @@ void setup() {
   
   Tinsp = 500;                               // Establece Tinsp a 500 mseg. Tiempo da apertura de la val insp en control peakflow
 
-  //Serial.println("COMIENZO");
+  Serial.println("COMIENZO");
   //Serial1.println("COMIENZO");
   analogWrite (ANINSP,0);                    // Cierra la válvula inspiratoria analógica
+  for (uint i = 0; i < n_samples; i++){
+      f_sensFE += (float) analogRead(SENSFE);
+      f_sensFI += (float) analogRead(SENSFI);
+      f_sensP  += (float) analogRead(SENSPR);
+  }
+  f_sensP  /= (float) n_samples;
+  f_sensFI /= (float) n_samples;
+  f_sensFE /= (float) n_samples;
+  beta  = 1.0 / (float) n_samples;
+  alpha = 1.0 - beta;
+
+  
   
   operationMode = PRS_CTRL;                  // Establece el modo de operación en control por presión
 }
@@ -268,11 +311,10 @@ void loop() {
       peakFlow = (float)Vset_ml/(float)Tinsp*60.0;    // peakFlow in lpm
       
       // **************************** LEE LOS SENSORES ***************************************
-      leesensores();
+      //leesensores();
  
        if (Marcha) {  // *********************** COMIENZA MARCHA *************************************************************
         contPaso++;                                   // Incrementa el contador de pasos
-        //if (inspVol_ml > 9000) inspVol_ml = 9000;
         // ************************************* Inicia ESPIRACION ***********************************************************
         if (contPaso < DurEsp){
           bandInsp = false;                                             // Señala al PC que entramos en espiración
@@ -294,7 +336,7 @@ void loop() {
                    if(abs(incPress) > 2) contPaso = DurEsp;      // Si hay una diferencia de 2 cmH2O, fuerza inspiracion
                 break; } 
                 case 2: {                                         // TRIGGER POR VOLUMEN  HACERLO POR DIF. ENTRE INSP Y ESP
-                  inspValue = 110;                                // Valvula Inspiratoria ligeramente abierta ??????
+                  inspValue = 130;                                // Valvula Inspiratoria ligeramente abierta ??????
                     if(abs(incFlow) > 3) contPaso = DurEsp;       // Si hay una diferencia de 3 cc, fuerza inspiracion
                 break; } 
               }                 // Fin de TriggerMode
@@ -338,6 +380,7 @@ void loop() {
           myservo.write(esplimit);          // Abre la válvula espiratoria 
           inspVol_ml = 0;
         }
+     
       } // **********************************  Termina if Marcha ******************************** 
       else {analogWrite(ANINSP,0);            // Cierra valvula inspiratoria
             myservo.write(esplimit);          // Abre la válvula espiratoria
@@ -345,27 +388,36 @@ void loop() {
       paso = 0;
       tant = micros();
       
+      f_sensFE = alpha*f_sensFE + beta*(float)analogRead(SENSFE);
+      f_sensFI = alpha*f_sensFI + beta*(float)analogRead(SENSFI);
+      f_sensP  = alpha*f_sensP  + beta*(float)analogRead(SENSPR);
+
+      Press_H2O = f_sensP * 0.07 - 4.8819;
+      inspFlow_lm = getFI(f_sensFI);
+      expFlow_lm = getFE(f_sensFE);
+      if (inspFlow_lm>0) inspVol_ml += inspFlow_lm * 0.01667;
+      if (expFlow_lm>0)  expVol_ml  += expFlow_lm  * 0.01667;
       
     } // *************************** Fin de cada mseg ****************************
 
     // ***************************** Cada centesima de segundo *******************
     if (contmseg >= 10) {
-      contcseg++;  
-      enviadatos();   
+      contcseg++;
+      if (not(contcseg % 2)) {
+        enviadatos();   
+      }
       // ********************** ENVIA DATOS AL PC *********************************************
       contmseg = 0; }
  
     // *****************************   Cada decima de segundo  *******************
     if (contcseg >= 10) { 
       contdseg++; 
-
-      // CALCULA LOS INCREMENTOS DE PRESIÓN Y FLUJO PARA LOS TRIGGERS
+     // CALCULA LOS INCREMENTOS DE PRESIÓN Y FLUJO PARA LOS TRIGGERS
       incPress = Press_H2O - pressAnt;
       pressAnt = Press_H2O;
       // incFlow lo debe calcular como la diferencia entre expFlow e insFlow
       incFlow = expFlow_lm - flowAnt;
       flowAnt = expFlow_lm;
-     
       if (contO2 < 10) {  // Mide la FiO2 cada décima de segundo, evita ruido. 
         contO2++;
         int so = analogRead(SENSO2);   sensO2 = sensO2 + so ; 
@@ -505,9 +557,9 @@ void enviadatos(){    // Envía datos cada 20 mseg dependiendo de bandenvio
         Sm.concat(sinfo);
         sprintf(sinfo, "%03d%04d%03d", (int)expFlow_lm*10, (int)inspVol_ml, (int)FiO2); 
         Sm.concat(sinfo);
-        sprintf(sinfo, "%04d%01d%c", (int)Tinsp, bandInsp, (char) Alarma); 
+        sprintf(sinfo, "%04d%01d", (int)Tinsp, bandInsp); 
         Sm.concat(sinfo);
-        if(Sm.length() == 43){ Serial.println (Sm); }
+        if(Sm.length() == 42){ Serial.println (Sm); }
         Sm = "";
 }
  

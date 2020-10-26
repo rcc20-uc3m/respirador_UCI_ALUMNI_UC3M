@@ -29,7 +29,7 @@
   }
   { Label1 Label
     MoveScaled(87,6,4,3)
-    Text = ("RPM")
+    Text = ("FREQ")
   }
   { TBPres TextBox
     MoveScaled(82,17,21,13)
@@ -69,11 +69,11 @@
   }
   { Label5 Label
     MoveScaled(83,17,5,3)
-    Text = ("Pr.Med")
+    Text = ("Pmeseta")
   }
   { Label6 Label
     MoveScaled(83,30,6,3)
-    Text = ("Pr.Max")
+    Text = ("Pip Max")
   }
   { TBFiO2 TextBox
     MoveScaled(103,17,21,13)

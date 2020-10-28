@@ -210,7 +210,7 @@
   }
   { BTrig2 Button
     MoveScaled(34,21,10,4)
-    Text = ("Volumen")
+    Text = ("Flujo")
   }
   { Ltrig Label
     MoveScaled(34,10,8,4)

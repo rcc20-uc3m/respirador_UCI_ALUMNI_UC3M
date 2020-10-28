@@ -55,9 +55,11 @@ Public MinX As Integer
 Public MaxX As Integer
 
 Public Pr As Float
+Public PrLI As Float
 Public Fi As Float
 Public FiMax As Float
 Public Fe As Float
+Public FeLI As Float
 Public FeMax As Float
 Public InspVol As Integer
 Public InspVolMax As Integer
@@ -176,6 +178,7 @@ Public Sub pinta1P(TDelay As Integer, Maxy As Integer, seg As Integer, yA As Int
 
 Dim x1, x2 As Integer
 Dim colorG1 As Integer          ' Colores de las gráficas
+Dim colorG2 As Integer
 Dim colorLins As Integer                                   ' Color de las lineas de division
 Dim FY As Float                                            ' Factor de escala del eje y
 Dim FX As Integer                                          ' Factor de escala horizontal
@@ -184,6 +187,7 @@ Dim n1 As Integer                                          ' Variable para cálc
   FY = FMain.Gr1.Height / Maxy                                    ' Factor de escala vertical
   FX = FMain.Gr1.Width / (1000 * seg / TDelay)
   colorG1 = Color.Yellow
+  colorG2 = Color.Red
   colorLins = Color.Gray
   TextLXmx.text = Datos[1, MaxX]
   TextLXmx.X = FMain.Gr1.X + Gr1.Width - 30
@@ -210,8 +214,11 @@ Dim n1 As Integer                                          ' Variable para cálc
   Draw.Foreground = colorG1
   'Draw.Line(x1, (FMain.Gr1.Height - (FMain.Gr1.Height / 3)), x1, (FMain.Gr1.Height - (yA * FY)))
   Draw.Line(x1 - 1, (FMain.Gr1.Height - (y1Aant * FY)), x1, (FMain.Gr1.Height - (yA * FY)))
+  Draw.Foreground = colorG2
+  Draw.Line(x1 - 1, (FMain.Gr1.Height - (y1Bant * FY)), x1, (FMain.Gr1.Height - (yB * FY)))
   Draw.End
   y1Aant = yA
+  y1Bant = yB
 End
 
 Public Sub pinta2P(TDelay As Integer, Maxy As Integer, seg As Integer, yA As Integer, yB As Integer, yC As Integer, YD As Integer)
@@ -222,7 +229,7 @@ Public Sub pinta2P(TDelay As Integer, Maxy As Integer, seg As Integer, yA As Int
 ' Las variables yAant, yBant, yCant e yDant deben definirse como variables globales Float
 
 Dim x1, x2 As Integer
-Dim colorG1, colorG2 As Integer          ' Colores de las gráficas
+Dim colorG1, colorG2, colorG3 As Integer          ' Colores de las gráficas
 Dim colorLins As Integer                                   ' Color de las lineas de division
 Dim FY As Float                                            ' Factor de escala del eje y
 Dim FX As Integer                                          ' Factor de escala horizontal
@@ -232,6 +239,7 @@ Dim n1 As Integer                                          ' Variable para cálc
   FX = FMain.Gr2.Width / (1000 * seg / TDelay)                    ' Factor de escala horizontal
   colorG1 = Color.Green
   colorG2 = Color.Cyan
+  colorG3 = Color.Red
   colorLins = Color.Gray
 
   TextLXmx.text = Datos[1, MaxX]
@@ -263,10 +271,14 @@ Dim n1 As Integer                                          ' Variable para cálc
   Draw.LineWidth = 1
   'Draw.Line(x1, (FMain.Gr2.Height - (FMain.Gr2.Height / 2)), x1, (FMain.Gr2.Height - (yB * FY)))
   Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Bant * FY)), x1, (FMain.Gr2.Height - (yB * FY)))
+  Draw.Foreground = colorG3
+  Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Cant * FY)), x1, (FMain.Gr2.Height - (yC * FY)))
   Draw.End
 
   y2Aant = yA
   y2Bant = yB
+  y2Cant = yC
+  
 End
 
 
@@ -281,7 +293,7 @@ Dim Id2 As String
 Dim Id3 As String
 Dim SF1, SF2 As Integer
 
-  Read #COMPort1, s, Lof(COMPort1)      'Lee los caracteres disponibles en COMPort1.Lof(COMPort)devuelve los caracteres a leer
+  Read #COMPort1, s, Lof(COMPort1)      'Lee los caracteres disponibles en COMPort1.Lof(COMxPort)devuelve los caracteres a leer
   strtemp1 = strtemp1 & s               'Almacena en strtemp1 los datos leídos de la línea de serie
   n1 = InStr(strtemp1, Chr$(13))        'Devuelve la posición de la línea nueva
   If n1 > 0 Then                        'Si la string tiene datos, entonces la posición de final de linea nunca será 0 (posición inicial) pero podrá
@@ -303,7 +315,7 @@ Public Sub Decod(st As String)
   Dim s As String
   Dim i As Integer
   'Debug "InputBuffer= "; COMPort1.InputBufferSize
-  If Len(st) = 43 Then   '& (Left(st, 1) = "F"))
+  If Len(st) = 51 Then   '& (Left(st, 1) = "F"))
       Marcha = Val(Mid(st, 1, 1))
       ControlMode = Val(Mid(st, 2, 1))
       TriggerMode = Val(Mid(st, 3, 1))
@@ -321,7 +333,10 @@ Public Sub Decod(st As String)
       FiO2 = Val(Mid(st, 35, 3)) 
       Tinsp = Val(Mid(st, 38, 4)) 
       bandInsp = Val(Mid(st, 42, 1))
-      'Alarma = Asc(Mid(st, 43, 1))
+      Alarma = Val(Mid(st, 43, 2))
+      PrLI = CFloat(Val(Mid(st, 45, 3))) / 10.0
+      FeLI = CFloat(Val(Mid(st, 48, 3))) / 10.0
+     
       
       ' ********************************************** INICIO INSPIRACION *************************************************
       If bandInspAnt = 0 And bandInsp = 1 Then    ' ENTRAMOS EN INSPIRACION **********************************************
@@ -387,7 +402,6 @@ Public Sub Decod(st As String)
           s = s & AlarmDescription[i] & "\n"
         Endif
       Next
-      
       TXAlarm.text = s
       
       'TBHora.text = Now
@@ -399,8 +413,8 @@ Public Sub Decod(st As String)
       MaxY1 = 75
       Maxy2 = 200
       
-      pinta1P(5, MaxY1, 10, Pr + MaxY1 / 3, 0, 0, 0)   
-      pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, 0, 0) 
+      pinta1P(5, MaxY1, 10, Pr + MaxY1 / 5, PrLI + MaxY1 / 5, 0, 0)   
+      pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, -(FeLI) + MaxY2 / 2, 0) 
       NumPunto = NumPunto + 1
       
       If NumPunto > 2000 Then ' Antes 2500

@@ -119,7 +119,7 @@ float f_sensFELI = 0.0;
 float f_sensP = 0.0;
 float f_sensPLI = 0.0;
 uint n_samples = 10;
-uint n_ciclos = 50;
+uint n_ciclos = 10;
 float alpha = 0.0;
 float beta = 0.0;
 float alphaLI = 0.0;
@@ -156,7 +156,7 @@ double flowSet, flowIn, flowOut;        // Peak_Flow
 int angulo;                             // Angulo del servo de la Valvula de espiracion
 
 // COEFICIENTES DEL PID DE PRESION *********************
-double pressKp=70, pressKi=2, pressKd=0;
+double pressKp=90, pressKi=4, pressKd=2;
 // COEFICIENTES DEL PID DE VOLUMEN *********************
 double flowKp=3, flowKi=0, flowKd=0;
 // COEFICIENTES DEL PID DE LA VALVULA ESPIRATORIA ******
@@ -345,7 +345,7 @@ void loop() {
                 break; } 
                 case 1: {                                        // TRIGGER POR PRESIÓN
                   inspValue = 0;                                 // Valvula Inspiratoria cerrada
-                  if (Press_H2O <  PressLI_H2O)  contPaso = Periodo;
+                  if (Press_H2O + 0.5 <  PressLI_H2O)  contPaso = Periodo;
                 break; } 
                 case 2: {                                         // TRIGGER POR VOLUMEN  HACERLO POR DIF. ENTRE INSP Y ESP
                   inspValue = 150;                                // Valvula Inspiratoria ligeramente abierta ??????
@@ -361,7 +361,8 @@ void loop() {
         if (contPaso >= Periodo){ 
           contPaso = 0;
           if (Press_H2O < PEEP_H2O-2.0) BIT_SET(Alarma, 2); //Alarma de peep más bajo de un 2cm del set
-          if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
+          //if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
+          if ( (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
           myservo.write(esplimit);          // Abre la válvula espiratoria 
           inspVol_ml = 0;
         }

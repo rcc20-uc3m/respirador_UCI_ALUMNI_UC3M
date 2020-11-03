@@ -214,8 +214,8 @@ Dim n1 As Integer                                          ' Variable para cálc
   Draw.Foreground = colorG1
   'Draw.Line(x1, (FMain.Gr1.Height - (FMain.Gr1.Height / 3)), x1, (FMain.Gr1.Height - (yA * FY)))
   Draw.Line(x1 - 1, (FMain.Gr1.Height - (y1Aant * FY)), x1, (FMain.Gr1.Height - (yA * FY)))
-  Draw.Foreground = colorG2
-  Draw.Line(x1 - 1, (FMain.Gr1.Height - (y1Bant * FY)), x1, (FMain.Gr1.Height - (yB * FY)))
+  'Draw.Foreground = colorG2
+  'Draw.Line(x1 - 1, (FMain.Gr1.Height - (y1Bant * FY)), x1, (FMain.Gr1.Height - (yB * FY)))
   Draw.End
   y1Aant = yA
   y1Bant = yB
@@ -271,8 +271,8 @@ Dim n1 As Integer                                          ' Variable para cálc
   Draw.LineWidth = 1
   'Draw.Line(x1, (FMain.Gr2.Height - (FMain.Gr2.Height / 2)), x1, (FMain.Gr2.Height - (yB * FY)))
   Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Bant * FY)), x1, (FMain.Gr2.Height - (yB * FY)))
-  Draw.Foreground = colorG3
-  Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Cant * FY)), x1, (FMain.Gr2.Height - (yC * FY)))
+  'Draw.Foreground = colorG3
+  'Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Cant * FY)), x1, (FMain.Gr2.Height - (yC * FY)))
   Draw.End
 
   y2Aant = yA
@@ -410,11 +410,13 @@ Public Sub Decod(st As String)
       
       MaxX = 2000
       MinX = 0
-      MaxY1 = 75
+      MaxY1 = 60
       Maxy2 = 200
       
       pinta1P(5, MaxY1, 10, Pr + MaxY1 / 5, PrLI + MaxY1 / 5, 0, 0)   
       pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, -(FeLI) + MaxY2 / 2, 0) 
+      'pinta1P(5, MaxY1, 10, Pr + MaxY1 / 5, 0, 0, 0)   
+      'pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, 0, 0) 
       NumPunto = NumPunto + 1
       
       If NumPunto > 2000 Then ' Antes 2500

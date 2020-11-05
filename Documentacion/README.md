@@ -1,6 +1,6 @@
 # Documentación
 
-En este directorio se presenta la documentación que describe el respirador. 
+En este [documento](./Respirador_UCI_RCC20.pdf) se presenta la documentación que describe el respirador. 
 
   * Objetivos de diseño 
   * Especificaciones de diseño

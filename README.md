@@ -14,12 +14,9 @@ https://www.fundacion.uc3m.es/respiradores-de-uci-para-vencer-al-covid-19/)
 
 ## Motivación
 <div align="justify">
-Dada la emergencia médica que ha surgido a nivel mundial debido a la pandemia ocasionada por el COVID-19 ha surgido la necesidad de proveer a los hospitales de un mayor stock de dispositivos para la ventilación mecánica invasiva. 
-</div>
+<p>Dada la emergencia médica que ha surgido a nivel mundial debido a la pandemia ocasionada por el COVID-19 ha surgido la necesidad de proveer a los hospitales de un mayor stock de dispositivos para la ventilación mecánica invasiva.</p>
 
-
-<div align="justify">
-Estos respiradores para cuidados intensivos (UCI) funcionan en modo de operación comandada (la máquina fuerza al paciente a respirar)  y en modo asistido (la máquina da soporte a la ventilación del paciente, completa su esfuerzo y mide de manera permanente el flujo, volumen y presión tanto en la espiración como la inspiración). 
+<p>Estos respiradores para cuidados intensivos (UCI) funcionan en modo de operación comandada (la máquina fuerza al paciente a respirar)  y en modo asistido (la máquina da soporte a la ventilación del paciente, completa su esfuerzo y mide de manera permanente el flujo, volumen y presión tanto en la espiración como la inspiración). </p> 
 </div>
 
 

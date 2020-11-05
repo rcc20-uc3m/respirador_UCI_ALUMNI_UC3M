@@ -27,5 +27,5 @@ https://www.fundacion.uc3m.es/respiradores-de-uci-para-vencer-al-covid-19/)
 
 ## Estado del proyecto
 <div align="justify">
-  <p>Este proyecto se encuentra en fase de desarrollo, y por lo tanto el contenido de este repositorio se actualiza periódicamente</p>
+  <p>Este proyecto se encuentra en **fase de desarrollo**, y por lo tanto el contenido de este repositorio se actualiza periódicamente</p>
   </div>

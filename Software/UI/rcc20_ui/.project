@@ -1,7 +1,7 @@
 # Gambas Project File 3.0
 Title=Lector de Ficheros
 Startup=FMain
-Version=1.0.8
+Version=1.0.9
 Component=gb.image
 Component=gb.gui.qt
 Component=gb.form

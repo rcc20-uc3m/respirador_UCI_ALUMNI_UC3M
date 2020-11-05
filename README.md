@@ -24,3 +24,8 @@ https://www.fundacion.uc3m.es/respiradores-de-uci-para-vencer-al-covid-19/)
 
 <p>Se trata de simplificar al máximo el hardware del dispositivo, ya que probablemente sea el factor limitante para un desarrollo rápido, cargando el peso del diseño sobre el software que es mucho menos limitante.</p>
 </div>
+
+## Estado del proyecto
+<div align="justify">
+  <p>Este proyecto se encuentra en <strong>fase de desarrollo</strong>, y por lo tanto el contenido de este repositorio se actualiza periódicamente</p>
+  </div>

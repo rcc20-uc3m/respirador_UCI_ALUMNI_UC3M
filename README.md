@@ -4,7 +4,7 @@
 
 ## Origen del proyecto
 <div align="justify">
-Este equipo médico nace de la colaboración científica de investigadores del Laboratorio de Circulación Artificial del Hospital General Universitario Gregorio Marañón y de investigadores y técnicos de la Universidad Carlos III de Madrid (UC3M), y fue financiado con una campaña de donaciones coordinada por la Fundación Universidad Carlos III e impulsada por Alumni UC3M así como por las aportaciones del Grupo Santa Lucía y de la Fundación Wolters Kluwers. 
+Este proyecto surge de la interacción entre la fundación COTEC y el laboratorio de Circulación Artificial del Hospital General Universitario Gregorio Marañón. Posteriormente se incorporan investigadores y técnicos de la Universidad Carlos III de Madrid (UC3M), y fue financiado con una campaña de donaciones coordinada por la Fundación Universidad Carlos III e impulsada por Alumni UC3M así como por las aportaciones del Grupo Santa Lucía y de la Fundación Wolters Kluwers. 
 </div>
 
 

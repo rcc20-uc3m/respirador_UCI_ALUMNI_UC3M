@@ -313,4 +313,8 @@
     MoveScaled(65,13,7,12)
     Text = ("Reset\nAlarm")
   }
+  { BCalib Button
+    MoveScaled(60,5,16,4)
+    Text = ("Calibracion")
+  }
 }

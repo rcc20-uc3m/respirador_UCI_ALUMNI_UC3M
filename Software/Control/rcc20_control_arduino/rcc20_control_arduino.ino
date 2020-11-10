@@ -14,19 +14,7 @@
   Utiliza un procesador Arduino Due
   Linea serie a 115.000 baudios para comunicar con PC
 
-  Utiliza dos salidas digitales: la 13 para la EV de Inspiracion y la 12 para la de espiración
-
-  COMANDOS:
-
-  RSPP            Para el respirador
-  RSPM            Pone en marcha el respirador
-  RSPFnnn         Establece frecuencia respiratoria
-  RSPSnnn         Establece el % de inspiracion
-  RSPAnnn         Establece el tiempo de apertura de la valv inspiratoria en ms * 10
-  RSPEnnn         Establece el nivel de PEEP en cuentas
-  RSPHnnn         Establece la presión máxima inspiratoria en cuentas
-  RSPVnnn         Establece el volumen tidal en ml
-
+ 
   Utilizamos el pin 6 EVMOT_ESP_HOME para enviar la posicion al servo
 
   Se implementa el poder modificar los coeficientes del control de la espiración 
@@ -124,7 +112,11 @@ float alpha = 0.0;
 float beta = 0.0;
 float alphaLI = 0.0;
 float betaLI = 0.0;
+// **************************** VARIABLES PARA CALIBRACIÓN *************************************
 
+boolean calibracion_on = false;
+unsigned int posCalInspiracion = 0;
+unsigned int posCalEspiracion = 0;
 
 
 // ****************************** Variables para lectura de la linea serie *******************************
@@ -252,155 +244,167 @@ void setup() {
   alpha = 1.0 - beta;
   betaLI = 1.0 / (float)(n_samples*n_ciclos);
   alphaLI = 1.0 - betaLI;
-
-  
   
   operationMode = PRS_CTRL;                  // Establece el modo de operación en control por presión
 }
 // *********************    FIN Inicializacion ***************************************
+
+
 
 // ******************************************** INICIO DEL BUCLE INFINITO **************************************************************
 void loop() {
 
   tact = micros();
   paso = tact - tant;
-// ******************************* LEE LA LINEA SERIE ******************************    
+  // ******************************* LEE LA LINEA SERIE ******************************    
   leeserie();   
 
   // ********************************************* CADA MILISEGUNDO ************************************************
-    if (paso >= 1000) {    
-      contmseg++;                                     // Incrementa el contador de milisegundos
-      Periodo = 60000 / Freq;                         // Calcula el periodo
-      DurEsp = PorcEsp * (Periodo / 100);             // Calcula la duracion de la espiración DurEsp
-      DurIns = Periodo - DurEsp;
-      peakFlow = (float)Vset_ml/(float)Tinsp*60.0;    // peakFlow in lpm
 
-      if (Alarma) {
-        digitalWrite(22, HIGH);
-      }
-      
+    if (paso >= 1000) {
+      contmseg++; // siguiente ms
+      // Adquisición datos
       f_sensFE = alpha*f_sensFE + beta*(float)analogRead(SENSFE);
       f_sensFI = alpha*f_sensFI + beta*(float)analogRead(SENSFI);
       f_sensP  = alpha*f_sensP  + beta*(float)analogRead(SENSPR);
       f_sensPLI = alphaLI*f_sensPLI  + betaLI*(float)analogRead(SENSPR);
       f_sensFELI= alphaLI*f_sensFELI + betaLI*(float)analogRead(SENSFE);
-
-      Press_H2O = getP(f_sensP);
-      PressLI_H2O=getP(f_sensPLI);
-      inspFlow_lm = getFI(f_sensFI);
-      expFlow_lm = getFE(f_sensFE);
-      expFlowLI_lm = getFE(f_sensFELI);
-      if (bandInsp) {
-        if (inspFlow_lm>0) {
-          inspVol_ml += (inspFlow_lm+ant_inspFlow_lm) * 0.008333;
-          ant_inspFlow_lm = inspFlow_lm;
-        }
-        if (expFlow_lm>0)  {
-          expVol_ml  += (expFlow_lm+ant_expFlow_lm)  * 0.008333;     
-          ant_expFlow_lm = expFlow_lm;
-        }
-      }
-      if (Marcha) {  // *********************** COMIENZA MARCHA *************************************************************
-        contPaso++;                                   // Incrementa el contador de pasos
-        // ************************************* Inicia INSPIRACION ***********************************************************
-        if (contPaso < DurIns) {
-          bandInsp = true;
-          myservo.write(esplow);                                      // Cierra Válvula Espiratoria
-          if (inspVol_ml > Vmax_ml)   BIT_SET(Alarma, 0);  // Si se alcanza el volumen maximo absoluto da alarma
-          if (Press_H2O > Pmax_H2O)   BIT_SET(Alarma, 1);   // Si se supera la presión máxima Da alarma
-          // SWITCH MODO DE OPERACION *****************************************************************************************         
-          switch(operationMode){   
-             // CONTROL POR PRESIÓN *********************************************************
-             case PRS_CTRL: {  
-                //if (Press_H2O >= Pset_H2O ){analogWrite(ANINSP,0);}   // Si alcanza el set de presión cierra la válvula inspiratoria
-                //else {                                                // Si no se ha alcanzado Pset calcula PID
-                  pressSet = Pset_H2O; pressIn = Press_H2O; pressPID.Compute();               
-                  analogWrite(ANINSP,pressOut); 
-                 //}                     // Actualiza la salida de la valvula
-             break;}   
-             // FIN DE CONTROL POR PRESION ****************************************************
- 
-             // CONTROL POR VOLUMEN ***********************************************************
-             case VOL_CTRL: {   
-                 if(inspVol_ml >= Vset_ml-10.0){analogWrite(ANINSP,0);}    // Si alcanza el set de volumen Cierra válv. inspiratoria 
-                 else {                                               // Si no se ha alcanzado Vset Calcula PID
-                    flowSet = peakFlow;  flowIn = inspFlow_lm;  flowPID.Compute();
-                    analogWrite(ANINSP,flowOut);}                     // Actualiza la salida de la valvula
-             break; }    
-             // FIN DE CONTROL POR VOLUMEN  **************************************************
+      
+      if (calibracion_on){
+        myservo.write(posCalEspiracion);
+        analogWrite(ANINSP,posCalInspiracion); 
+      } else {
+        Periodo = 60000 / Freq;                         // Calcula el periodo
+        DurEsp = PorcEsp * (Periodo / 100);             // Calcula la duracion de la espiración DurEsp
+        DurIns = Periodo - DurEsp;
+        peakFlow = (float)Vset_ml/(float)Tinsp*60.0;    // peakFlow in lpm
+  
+        if (Alarma) {
+          digitalWrite(22, HIGH);
+        }     
+   
+        Press_H2O = getP(f_sensP);
+        PressLI_H2O=getP(f_sensPLI);
+        inspFlow_lm = getFI(f_sensFI);
+        expFlow_lm = getFE(f_sensFE);
+        expFlowLI_lm = getFE(f_sensFELI);
+        
+        // Integro el volumen durante la inspiración
+        if (bandInsp) {
+          if (inspFlow_lm>0) {
+            inspVol_ml += (inspFlow_lm+ant_inspFlow_lm) * 0.008333;
+            ant_inspFlow_lm = inspFlow_lm;
           }
-        } else {  // ************************************* Inicia ESPIRACION ***********************************************************
-          bandInsp = false;                                             // Señala al PC que entramos en espiración
-          analogWrite(ANINSP,inspValue);                                // Cierra Valv Insp al valor dependiente del modo de trigger
-          presIn = Press_H2O; peepSet = PEEP_H2O; servoPID.Compute();   // Calcula Posicion Valvula Servo con el PID
-          angulo = (int) angOut;
-          myservo.write(angulo);                                        // Actualiza el angulo del servo de la valv esp
-
-          // ********************************** DETECCION DEL TRIGGER **********************************
-          if(contPaso > DurIns+(float)DurEsp/3.0){                               // Sólo actua a partir de la tercera parte de la espiración
-            if(abs(PEEP_H2O - Press_H2O) < 0.5){                 // Si la presión está proxima a la PEEP 
-              switch(TriggerMode){                               // Actua dependiendo del modo de trigger
-                case 0: {                                        // SIN TRIGGER
-                    inspValue = 0;                               // Valvula Inspiratoria cerrada
-                break; } 
-                case 1: {                                        // TRIGGER POR PRESIÓN
-                  inspValue = 0;                                 // Valvula Inspiratoria cerrada
-                  if (Press_H2O + 0.5 <  PressLI_H2O)  contPaso = Periodo;
-                break; } 
-                case 2: {                                         // TRIGGER POR VOLUMEN  HACERLO POR DIF. ENTRE INSP Y ESP
-                  inspValue = 150;                                // Valvula Inspiratoria ligeramente abierta ??????
-                  if ( expFlow_lm + 2 < expFlowLI_lm) contPaso = Periodo;
-                break; } 
-              }                 // Fin de TriggerMode
-            }                   // Fin de si la presión está próxima a la PEEP
-          }                     // Fin de que solo acúa en la tercera fase de la inspiracion
-        }                       // Fin de la ESPIRACION
-        
-        
-        // Fin del Periodo **************************************************************
-        if (contPaso >= Periodo){ 
-          contPaso = 0;
-          if (Press_H2O < PEEP_H2O-2.0) BIT_SET(Alarma, 2); //Alarma de peep más bajo de un 2cm del set
-          //if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
-          if ( (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
-          myservo.write(esplimit);          // Abre la válvula espiratoria 
-          inspVol_ml = 0;
+          if (expFlow_lm>0)  {
+            expVol_ml  += (expFlow_lm+ant_expFlow_lm)  * 0.008333;     
+            ant_expFlow_lm = expFlow_lm;
+          }
         }
-     
-      } // **********************************  Termina if Marcha ******************************** 
-      else {analogWrite(ANINSP,0);            // Cierra valvula inspiratoria
-            myservo.write(esplimit);          // Abre la válvula espiratoria
+        if (Marcha) {  // *********************** COMIENZA MARCHA *************************************************************
+          contPaso++;                                   // Incrementa el contador de pasos
+          // ************************************* Inicia INSPIRACION ***********************************************************
+          if (contPaso < DurIns) {
+            bandInsp = true;
+            myservo.write(esplow);                                      // Cierra Válvula Espiratoria
+            if (inspVol_ml > Vmax_ml)   BIT_SET(Alarma, 0);  // Si se alcanza el volumen maximo absoluto da alarma
+            if (Press_H2O > Pmax_H2O)   BIT_SET(Alarma, 1);   // Si se supera la presión máxima Da alarma
+            // SWITCH MODO DE OPERACION *****************************************************************************************         
+            switch(operationMode){   
+               // CONTROL POR PRESIÓN *********************************************************
+               case PRS_CTRL: {  
+                  //if (Press_H2O >= Pset_H2O ){analogWrite(ANINSP,0);}   // Si alcanza el set de presión cierra la válvula inspiratoria
+                  //else {                                                // Si no se ha alcanzado Pset calcula PID
+                    pressSet = Pset_H2O; pressIn = Press_H2O; pressPID.Compute();               
+                    analogWrite(ANINSP,pressOut); 
+                   //}                     // Actualiza la salida de la valvula
+               break;}   
+               // FIN DE CONTROL POR PRESION ****************************************************
+   
+               // CONTROL POR VOLUMEN ***********************************************************
+               case VOL_CTRL: {   
+                   if(inspVol_ml >= Vset_ml-10.0){analogWrite(ANINSP,0);}    // Si alcanza el set de volumen Cierra válv. inspiratoria 
+                   else {                                               // Si no se ha alcanzado Vset Calcula PID
+                      flowSet = peakFlow;  flowIn = inspFlow_lm;  flowPID.Compute();
+                      analogWrite(ANINSP,flowOut);}                     // Actualiza la salida de la valvula
+               break; }    
+               // FIN DE CONTROL POR VOLUMEN  **************************************************
+            }
+          } else {  // ************************************* Inicia ESPIRACION ***********************************************************
+            bandInsp = false;                                             // Señala al PC que entramos en espiración
+            analogWrite(ANINSP,inspValue);                                // Cierra Valv Insp al valor dependiente del modo de trigger
+            presIn = Press_H2O; peepSet = PEEP_H2O; servoPID.Compute();   // Calcula Posicion Valvula Servo con el PID
+            angulo = (int) angOut;
+            myservo.write(angulo);                                        // Actualiza el angulo del servo de la valv esp
+  
+            // ********************************** DETECCION DEL TRIGGER **********************************
+            if(contPaso > DurIns+(float)DurEsp/3.0){                               // Sólo actua a partir de la tercera parte de la espiración
+              if(abs(PEEP_H2O - Press_H2O) < 0.5){                 // Si la presión está proxima a la PEEP 
+                switch(TriggerMode){                               // Actua dependiendo del modo de trigger
+                  case 0: {                                        // SIN TRIGGER
+                      inspValue = 0;                               // Valvula Inspiratoria cerrada
+                  break; } 
+                  case 1: {                                        // TRIGGER POR PRESIÓN
+                    inspValue = 0;                                 // Valvula Inspiratoria cerrada
+                    if (Press_H2O + 0.5 <  PressLI_H2O)  contPaso = Periodo;
+                  break; } 
+                  case 2: {                                         // TRIGGER POR VOLUMEN  HACERLO POR DIF. ENTRE INSP Y ESP
+                    inspValue = 150;                                // Valvula Inspiratoria ligeramente abierta ??????
+                    if ( expFlow_lm + 2 < expFlowLI_lm) contPaso = Periodo;
+                  break; } 
+                }                 // Fin de TriggerMode
+              }                   // Fin de si la presión está próxima a la PEEP
+            }                     // Fin de que solo acúa en la tercera fase de la inspiracion
+          }                       // Fin de la ESPIRACION
+        
+          
+          // Fin del Periodo **************************************************************
+          if (contPaso >= Periodo){ 
+            contPaso = 0;
+            if (Press_H2O < PEEP_H2O-2.0) BIT_SET(Alarma, 2); //Alarma de peep más bajo de un 2cm del set
+            //if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
+            if ( (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
+            myservo.write(esplimit);          // Abre la válvula espiratoria 
+            inspVol_ml = 0;
+          }
+       
+        } // **********************************  Termina if Marcha ******************************** 
+        else {analogWrite(ANINSP,0);            // Cierra valvula inspiratoria
+              myservo.write(esplimit);          // Abre la válvula espiratoria
+        }
       }
       paso = 0;
       tant = micros();
-      
- 
+       
       
     } // *************************** Fin de cada mseg ****************************
-
+  
     // ***************************** Cada centesima de segundo *******************
     if (contmseg >= 10) {
       contcseg++;
       if (not(contcseg % 2)) {
-        enviadatos();   
+        if(calibracion_on){
+        
+          sprintf(sinfo, "InsPos\tEspPos\tsensP\tf_sensP\tsensFI\tf_sensFI\tsensFE\tf_sensFE");
+          Serial.println(sinfo);
+          sprintf(sinfo, "%03d\t%03d\t%03lu\t%03.0f\t%03lu\t%03.0f\t\t%03lu\t%03.0f",
+                  posCalInspiracion, posCalEspiracion, sensP, f_sensP, sensFI, f_sensFI, sensFE, f_sensFE);
+          Serial.println(sinfo);
+        } else {     
+          enviadatos();   
+        }
       }
       // ********************** ENVIA DATOS AL PC *********************************************
-      contmseg = 0; }
+      contmseg = 0; 
+    }
  
     // *****************************   Cada decima de segundo  *******************
     if (contcseg >= 10) { 
       contdseg++; 
      // CALCULA LOS INCREMENTOS DE PRESIÓN Y FLUJO PARA LOS TRIGGERS
-      incPress = Press_H2O - pressAnt;
-      pressAnt = Press_H2O;
-      // incFlow lo debe calcular como la diferencia entre expFlow e insFlow
-      incFlow = expFlow_lm - flowAnt;
-      flowAnt = expFlow_lm;
       if (contO2 < 10) {  // Mide la FiO2 cada décima de segundo, evita ruido. 
         contO2++;
         int so = analogRead(SENSO2);   sensO2 = sensO2 + so ; 
       }
-
       if (contO2 >= 10){  // Cada segundo calcula la media de la FiO2
         sensO2 = sensO2/10; 
        FiO2 = 0.0001*sensO2*sensO2 - 0.0649*sensO2 + 29.475;
@@ -429,66 +433,88 @@ void leeserie(){
 
     if (StrS[0] == 'R' && StrS[1] == 'S' && StrS[2] == 'P') {
        switch(StrS[3]){
+         case 'A': { // Lee el modo de TRIGGER SIN=0, Pres= 1, Vol=2 ****************************
+            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);        
+            d = a + b + c;  TriggerMode = d; 
+          break; }
           case 'B': {  //lee MAX PIP **********************************************************
             a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
             d = a + b + c;    Pmax_H2O = d;  
           break; }
-          case 'C': {  //lee max Vt **********************************************************
+          case 'C': { // Modo calibración
+            Marcha = false; 
+            analogWrite(ANINSP,0);            // Cierra la válvula inspiratoria
+            myservo.write(esplimit);          // Abre la válvula espiratoria
+            contPaso = 0; 
+            bandInsp = false;            
+            calibracion_on = true;
+            break;
+          }
+          case 'D': {  //lee MAX Vt **********************************************************
             a = (int(StrS[4]) - 48) * 1000;  b = (int(StrS[5]) - 48) * 100; c = (int(StrS[6]) - 48)*10;
             e = (int(StrS[7]) - 48);
             d = a + b + c + e;    Vmax_ml = d;  
-          break; }
-          
-          case 'F': {  //lee frecuencia **********************************************************
-            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
-            d = a + b + c;    Freq = d;  
-            //Serial.print("FREQ=");  Serial.println(Freq);
-          break; }
-          case 'S': {  //  "RSPSnnn" % Inspiracion ***********************************************
-            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);        
-            d = a + b + c;  PorcEsp = 100 - d; 
-          break; }
-          case 'A': { // Lee el modo de TRIGGER SIN=0, Pres= 1, Vol=2 ****************************
-            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);        
-            d = a + b + c;  TriggerMode = d; 
           break; }
           case 'E': {  // lee PEEP ***************************************************************
             a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
             d = a + b + c;    PEEP_H2O = (float)d / 10;  
           break; }
+          case 'F': {  //lee frecuencia **********************************************************
+            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
+            d = a + b + c;    Freq = d;  
+            //Serial.print("FREQ=");  Serial.println(Freq);
+          break; }
           case 'G': {  // lee PIP *****************************************************************
             a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
             d = a + b + c;    Pset_H2O = d;  
           break;}
-          case 'V': { // lee Vt
-            a = (int(StrS[4]) - 48) * 1000;  b = (int(StrS[5]) - 48) * 100; c = (int(StrS[6]) - 48)*10;        
-            e = (int(StrS[7]) - 48);
-            d = a + b + c + e;  Vset_ml = d;
-          break; }
+          case 'H': { // calibración set de v. espiración
+            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
+            d = a + b + c;    posCalEspiracion = d; 
+            break; 
+          }
+          case 'I': { // calibración set de v. inspiración
+            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
+            d = a + b + c;    posCalInspiracion = d;  
+            break;
+          }
+          case 'K': {                         // Cambio de la complianza
+            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
+            d = a + b + c;    Complianza = d;
+          break; }  
           case 'L': { // Cambio de modo 
             a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
             d = a + b + c;    operationMode = d;
           break; }
           case 'M': { 
             Marcha = true; 
-          break; }
+          break; }          
+          case 'N':{// modo normal no calibracion
+            calibracion_on = false;
+            break;
+          }
           case 'P': { 
             Marcha = false; 
             analogWrite(ANINSP,0);            // Cierra la válvula inspiratoria
             myservo.write(esplimit);          // Abre la válvula espiratoria
             contPaso = 0; 
             bandInsp = false;
+          break; }          
+          case 'S': {  //  "RSPSnnn" % Inspiracion ***********************************************
+            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);        
+            d = a + b + c;  PorcEsp = 100 - d; 
           break; }
-          case 'I': {                         // tiempo de apertura de la valv insp para el control del peakflow
+          case 'T': {                         // tiempo de apertura de la valv insp para el control del peakflow
             a = (int(StrS[4]) - 48) * 1000;  b = (int(StrS[5]) - 48) * 100; c = (int(StrS[6]) - 48)*10;        
             e = (int(StrS[7]) - 48);
             d = a + b + c + e;  Tinsp = d;
             if(Tinsp > (DurIns-100))Tinsp = DurIns -100;
             if(Tinsp < 100)Tinsp = 100;
-          break; }
-          case 'K': {                         // Cambio de la complianza
-            a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
-            d = a + b + c;    Complianza = d;
+          break; }          
+          case 'V': { // lee Vt
+            a = (int(StrS[4]) - 48) * 1000;  b = (int(StrS[5]) - 48) * 100; c = (int(StrS[6]) - 48)*10;        
+            e = (int(StrS[7]) - 48);
+            d = a + b + c + e;  Vset_ml = d;
           break; }
           case 'X': {
             Alarma = (char) 0;

@@ -1,0 +1,12 @@
+' Gambas class file
+
+
+Public Sub Form_Open()
+
+  
+
+End
+
+Public Sub BVuelta_Click()
+  Me.Close
+End

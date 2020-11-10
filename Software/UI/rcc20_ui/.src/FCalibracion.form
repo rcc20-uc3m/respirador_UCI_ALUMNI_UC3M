@@ -1,0 +1,9 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,64)
+  { BVuelta Button
+    MoveScaled(25,31,16,4)
+    Text = ("Vuelta")
+  }
+}

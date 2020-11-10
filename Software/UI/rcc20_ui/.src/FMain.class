@@ -112,7 +112,7 @@ Public Sub Form_Open()
     COMPort1.Open()
   If Error Then
     Message("No Serial COMPort1 Exiting...")
-    Quit
+    'Quit
   Endif
  Debug "COMprt1 ABIERTA"
  
@@ -522,11 +522,11 @@ Public Sub BTrig2_Click()
 End
 
 Public Sub BtinspMas_Click()
-   Print #COMPort1, "RSPI"; Format((Tinsp + 50), "0000")   
+   Print #COMPort1, "RSPT"; Format((Tinsp + 50), "0000")   
 End
 
 Public Sub BtinspMenos_Click()
-  Print #COMPort1, "RSPI"; Format((Tinsp - 50), "0000")   
+  Print #COMPort1, "RSPT"; Format((Tinsp - 50), "0000")   
 End
 
 
@@ -538,13 +538,17 @@ Public Sub BPmaxMas_Click()
 End
 
 Public Sub BVolMenos_Click()
-  If VtMax > minVolMax Then Print #COMPort1, "RSPC"; Format((VtMax - 10), "0000")
+  If VtMax > minVolMax Then Print #COMPort1, "RSPD"; Format((VtMax - 10), "0000")
 End
 
 Public Sub BVolMas_Click()
-  If VtMax < maxVolMax Then Print #COMPort1, "RSPC"; Format((VtMax + 10), "0000")
+  If VtMax < maxVolMax Then Print #COMPort1, "RSPD"; Format((VtMax + 10), "0000")
 End
 
 Public Sub BResetAlarm_Click()
   Print #COMPort1, "RSPX"
+End
+
+Public Sub BCalib_Click()
+  FCalibracion.ShowModal
 End

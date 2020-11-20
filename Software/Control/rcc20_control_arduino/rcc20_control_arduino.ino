@@ -73,17 +73,17 @@ float ant_inspFlow_lm = 0;        // Flujo inspiratorio en l/min. Valor anterior
 float ant_expFlow_lm = 0;         // Flujo espiratorio en l/min. Valor anterior para la integración
 
 float FiO2 = 0;               // Valor de FiO2 calculada
-unsigned long sensP = 0;      // Valor del sensor de presión en cuentas
-unsigned long sensFI = 0;     // Valor del sensor de flujo Inspiratorio en cuentas
-unsigned long maxsensFI = 0;  // Valor máximo en cuentas leido por el sensor
-unsigned long sensFE = 0;     // Valor del sensor de flujo Espiratorio en cuentas
+//unsigned long sensP = 0;      // Valor del sensor de presión en cuentas
+//unsigned long sensFI = 0;     // Valor del sensor de flujo Inspiratorio en cuentas
+//unsigned long maxsensFI = 0;  // Valor máximo en cuentas leido por el sensor
+//unsigned long sensFE = 0;     // Valor del sensor de flujo Espiratorio en cuentas
 unsigned long sensO2 = 0;     // Valor del sensor de O2 en cuentas
 
 // *********************************** Variables de control del trigger *********************************
-float pressAnt;               // Medida anterior de presión
-float incPress;               // Incremento de presión para detectar trigger
-float flowAnt;                // Medida anterior de volumen
-float incFlow;                // Incremento de volumen para detectar el trigger
+//float pressAnt;               // Medida anterior de presión
+//float incPress;               // Incremento de presión para detectar trigger
+//float flowAnt;                // Medida anterior de volumen
+//float incFlow;                // Incremento de volumen para detectar el trigger
 int TriggerMode = 0;          // Se inicia sin trigger
 int inspValue = 0;            // Valor de apertura de la válvula Inspiratoria dependiendo del trigger
 
@@ -115,8 +115,8 @@ float betaLI = 0.0;
 // **************************** VARIABLES PARA CALIBRACIÓN *************************************
 
 boolean calibracion_on = false;
-unsigned int posCalInspiracion = 0;
-unsigned int posCalEspiracion = 0;
+int posCalInspiracion = 0;
+int pitos = 0;
 
 
 // ****************************** Variables para lectura de la linea serie *******************************
@@ -124,7 +124,7 @@ char ByteR;                   // Byte leido por la linea serie
 String StrS = "";             // String para almacenar los datos entrantes
 boolean SFin = false;         // Bandera de string completa
 String Sm = "";               // String para construir el mensaje de salida con los datos
-char sinfo[30];               // String para construir el mensaje de salida con los datos, junto con Sm
+char sinfo[255];               // String para construir el mensaje de salida con los datos, junto con Sm
 
 int bandenvio = 0;            // Bandera para enviar datos cada 20 mseg 
 short operationMode;          // Modo de operación PRS_CTRL, VOL_CTRL ó FLW_CTRL
@@ -141,14 +141,14 @@ int esplow = 0;              // Valor del límite inferior de la valvula espirat
 //******************************** Variables de los PID ****************************************************
 //******* Set=Valor de referencia; In=Valor de entrada al PID; Out=Valor de salida de PID ******************
 double pressSet, pressIn, pressOut;     // Presión
-double volSet, volIn, volOut;           // Volumen
+//double volSet, volIn, volOut;           // Volumen
 double presIn, angOut, peepSet;         // Angulo del servo de la Valvula de espiracion
 double flowSet, flowIn, flowOut;        // Peak_Flow 
 
 int angulo;                             // Angulo del servo de la Valvula de espiracion
 
 // COEFICIENTES DEL PID DE PRESION *********************
-double pressKp=90, pressKi=4, pressKd=2;
+double pressKp=40, pressKi=4, pressKd=2;
 // COEFICIENTES DEL PID DE VOLUMEN *********************
 double flowKp=3, flowKi=0, flowKd=0;
 // COEFICIENTES DEL PID DE LA VALVULA ESPIRATORIA ******
@@ -162,27 +162,29 @@ PID servoPID(&presIn, &angOut, &peepSet, serKp, serKi, serKd, REVERSE);
 
 
 int n_puntos = 9;
-float xFI[] = {97, 124, 156, 440, 672, 773, 819, 846, 852};
-float yFI[] = {0, 2.28, 4.66, 27.4, 56.5, 80.5, 97.2, 108.1, 110.0};
-float xFE[] = {85, 110, 139, 413, 639, 738, 788, 805, 810, };
+float xFI[] = {97, 111, 366, 488, 613, 703, 790, 835, 865};
+float xFE[] = {87, 100, 345, 460, 577, 670, 755, 797, 820};
+float yFX[] = {0.05, 1.25, 19.69, 31.9, 46, 60, 83.5, 100.5, 115.0};
+float xP[] = {70, 95, 158, 230, 297, 315, 405, 698, 950};
+float yP[] = {0.01, 1.53, 5.63, 10.22, 14.5, 16.5, 23.0, 47.05, 81.3};
 
 float interpLineal(int n, float pos, float* X, float* Y){
     for(int i = 0; i < n_puntos-1; i++){
         if ((X[i] < pos) && (pos < X[i+1])){
-            return yFI[i] + (pos - X[i])/(X[i+1]-X[i])*(Y[i+1]-Y[i]);
+            return Y[i] + (pos - X[i])/(X[i+1]-X[i])*(Y[i+1]-Y[i]);
         }
     }
     return 0;
 }
 float getFI(float pos){
-    return interpLineal(n_puntos, pos, xFI, yFI);
+    return interpLineal(n_puntos, pos, xFI, yFX);
 }
 float getFE(float pos){
-    return interpLineal(n_puntos, pos, xFE, yFI);
+    return interpLineal(n_puntos, pos, xFE, yFX);
 }
 
 float getP(float pos) {
-  return pos * 0.07 - 3.8819;
+  return interpLineal(n_puntos, pos, xP, yP);
 }
 
 
@@ -271,8 +273,8 @@ void loop() {
       f_sensFELI= alphaLI*f_sensFELI + betaLI*(float)analogRead(SENSFE);
       
       if (calibracion_on){
-        myservo.write(posCalEspiracion);
         analogWrite(ANINSP,posCalInspiracion); 
+        myservo.write(pitos);
       } else {
         Periodo = 60000 / Freq;                         // Calcula el periodo
         DurEsp = PorcEsp * (Periodo / 100);             // Calcula la duracion de la espiración DurEsp
@@ -382,12 +384,11 @@ void loop() {
     if (contmseg >= 10) {
       contcseg++;
       if (not(contcseg % 2)) {
-        if(calibracion_on){
-        
+        if(calibracion_on){  
           sprintf(sinfo, "InsPos\tEspPos\tsensP\tf_sensP\tsensFI\tf_sensFI\tsensFE\tf_sensFE");
-          Serial.println(sinfo);
-          sprintf(sinfo, "%03d\t%03d\t%03lu\t%03.0f\t%03lu\t%03.0f\t\t%03lu\t%03.0f",
-                  posCalInspiracion, posCalEspiracion, sensP, f_sensP, sensFI, f_sensFI, sensFE, f_sensFE);
+          //Serial.println(sinfo);
+          sprintf(sinfo, "InspPos = %03d  EspPos = %03d  SensP = %03.0f P = %03.2f sensFI = %03.0f FI = %03.2f sensFE = %03.0f FE = %03.2f",
+                  posCalInspiracion, pitos, f_sensP, getP(f_sensP), f_sensFI, getFI(f_sensFI), f_sensFE, getFE(f_sensFE));
           Serial.println(sinfo);
         } else {     
           enviadatos();   
@@ -445,6 +446,7 @@ void leeserie(){
             Marcha = false; 
             analogWrite(ANINSP,0);            // Cierra la válvula inspiratoria
             myservo.write(esplimit);          // Abre la válvula espiratoria
+            //pitos = esplimit;
             contPaso = 0; 
             bandInsp = false;            
             calibracion_on = true;
@@ -470,12 +472,12 @@ void leeserie(){
           break;}
           case 'H': { // calibración set de v. espiración
             a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
-            d = a + b + c;    posCalEspiracion = d; 
+            d = a + b + c;    pitos = d; 
             break; 
           }
           case 'I': { // calibración set de v. inspiración
             a = (int(StrS[4]) - 48) * 100;  b = (int(StrS[5]) - 48) * 10; c = (int(StrS[6]) - 48);
-            d = a + b + c;    posCalInspiracion = d;  
+            d = a + b + c;    posCalInspiracion = d;
             break;
           }
           case 'K': {                         // Cambio de la complianza
@@ -490,6 +492,10 @@ void leeserie(){
             Marcha = true; 
           break; }          
           case 'N':{// modo normal no calibracion
+            analogWrite(ANINSP,0);            // Cierra la válvula inspiratoria
+            myservo.write(esplimit);          // Abre la válvula espiratoria
+            contPaso = 0; 
+            bandInsp = false; 
             calibracion_on = false;
             break;
           }

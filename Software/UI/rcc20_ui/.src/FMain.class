@@ -112,7 +112,7 @@ Public Sub Form_Open()
     COMPort1.Open()
   If Error Then
     Message("No Serial COMPort1 Exiting...")
-    'Quit
+    Quit
   Endif
  Debug "COMprt1 ABIERTA"
  

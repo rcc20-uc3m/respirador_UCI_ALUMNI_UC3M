@@ -1,7 +1,7 @@
 # Gambas Project File 3.0
 Title=Lector de Ficheros
 Startup=FMain
-Version=1.0.9
+Version=1.0.10
 Component=gb.image
 Component=gb.gui.qt
 Component=gb.form
@@ -10,6 +10,15 @@ Component=gb.net
 Component=gb.vb
 TabSize=2
 Language=es_ES
+KeepDebugInfo=0
 ControlPublic=1
 ModulePublic=1
+Maintainer=diego
+Address=diego@bicho
+License=General Public License
+PackageName=rcc20_ui-1.0.9
 Packager=1
+Systems=ubuntu
+Menus=ubuntu:"Applications/Science/Engineering"
+Categories=ubuntu:"Engineering;Science"
+Groups=ubuntu:"electronics"

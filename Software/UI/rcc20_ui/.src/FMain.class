@@ -193,7 +193,6 @@ Dim n1 As Integer                                          ' Variable para cálc
   TextLXmx.X = FMain.Gr1.X + Gr1.Width - 30
   TextLXmx.Y = FMain.Gr1.Y + FMain.Gr1.Height
   
-  n += 1
   x1 = n
 
   Draw.Begin(FMain.Gr1)
@@ -210,7 +209,7 @@ Dim n1 As Integer                                          ' Variable para cálc
     Endif
   Next
   '****************************************** PINTA GRAFICAS ***********************************
-  Draw.LineWidth = 1
+  Draw.LineWidth = 2
   Draw.Foreground = colorG1
   'Draw.Line(x1, (FMain.Gr1.Height - (FMain.Gr1.Height / 3)), x1, (FMain.Gr1.Height - (yA * FY)))
   Draw.Line(x1 - 1, (FMain.Gr1.Height - (y1Aant * FY)), x1, (FMain.Gr1.Height - (yA * FY)))
@@ -246,7 +245,6 @@ Dim n1 As Integer                                          ' Variable para cálc
   TextLXmx.X = FMain.Gr2.X + Gr2.Width - 30
   TextLXmx.Y = FMain.Gr2.Y + FMain.Gr2.Height
   
- ' n += 1
   x1 = n
 
   Draw.Begin(FMain.Gr2)
@@ -263,12 +261,12 @@ Dim n1 As Integer                                          ' Variable para cálc
     Endif
   Next
   '****************************************** PINTA GRAFICAS ***********************************
-  Draw.LineWidth = 1
+  Draw.LineWidth = 2
   Draw.Foreground = colorG1
   'Draw.Line(x1, (FMain.Gr2.Height - (FMain.Gr2.Height / 2)), x1, (FMain.Gr2.Height - (yA * FY)))
   Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Aant * FY)), x1, (FMain.Gr2.Height - (yA * FY)))
   Draw.Foreground = colorG2
-  Draw.LineWidth = 1
+  Draw.LineWidth = 2
   'Draw.Line(x1, (FMain.Gr2.Height - (FMain.Gr2.Height / 2)), x1, (FMain.Gr2.Height - (yB * FY)))
   Draw.Line(x1 - 1, (FMain.Gr2.Height - (y2Bant * FY)), x1, (FMain.Gr2.Height - (yB * FY)))
   'Draw.Foreground = colorG3
@@ -413,10 +411,11 @@ Public Sub Decod(st As String)
       MaxY1 = 60
       Maxy2 = 200
       
-      pinta1P(5, MaxY1, 10, Pr + MaxY1 / 5, PrLI + MaxY1 / 5, 0, 0)   
-      pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, -(FeLI) + MaxY2 / 2, 0) 
-      'pinta1P(5, MaxY1, 10, Pr + MaxY1 / 5, 0, 0, 0)   
-      'pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, 0, 0) 
+      'pinta1P(5, MaxY1, 10, Pr + MaxY1 / 5, PrLI + MaxY1 / 5, 0, 0)   
+      'pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, -(FeLI) + MaxY2 / 2, 0) 
+      pinta1P(5, MaxY1, 10, Pr + MaxY1 / 5, 0, 0, 0)   
+      pinta2P(1, MaxY2, 10, Fi + MaxY2 / 2, -(Fe) + MaxY2 / 2, 0, 0) 
+      n += 1
       NumPunto = NumPunto + 1
       
       If NumPunto > 2000 Then ' Antes 2500

@@ -58,6 +58,7 @@ float peakFlow;               // Flujo Inspiratorio en el control por volumen
 int Tinsp;                    // Tiempo de apertura de la valvula inspiratoria en el control por flujo (mseg)
 int Complianza;               // Complianza introducida por el usuario (baja = 0, media = 1, alta = 2)
 boolean bandInsp = false;     // Bandera de inspiracion para que el PC conozca el estado del ciclo.
+boolean send_end_data = false;// Bandera para enviar el bloque de datos de fin de ciclo
 
 // **************************** Variables de control de Flujo y Presión *********************************
 float Press_H2O = 0;          // Presión en cm H2O
@@ -190,8 +191,9 @@ float getP(float pos) {
 
 // **********************************               Rutina de inicializacion           ****************************************************
 void setup() {
-  myservo.attach(6);                         // Inicializa el servo de la Valvula espiratoria en el PIN 6
-  pinMode(22, OUTPUT);
+  myservo.attach(6);  // Inicializa el servo de la Valvula espiratoria en el PIN 6
+  pinMode(30, OUTPUT);
+  pinMode(22, OUTPUT);                       // Salida digital para la alarma acústica
   pinMode(SENSPR, INPUT);                    // Define el sensor de presión como entrada
   pinMode(SENSFI, INPUT);                    // Define el sensor de Flujo Inspiratorio como entrada
   pinMode(SENSFE, INPUT);                    // Define el sensor de Flujo Espiratorio como entrada
@@ -255,7 +257,7 @@ void setup() {
 
 // ******************************************** INICIO DEL BUCLE INFINITO **************************************************************
 void loop() {
-
+  digitalWrite(30, HIGH);
   tact = micros();
   paso = tact - tant;
   // ******************************* LEE LA LINEA SERIE ******************************    
@@ -350,7 +352,7 @@ void loop() {
                     if (Press_H2O + 0.5 <  PressLI_H2O)  contPaso = Periodo;
                   break; } 
                   case 2: {                                         // TRIGGER POR VOLUMEN  HACERLO POR DIF. ENTRE INSP Y ESP
-                    inspValue = 150;                                // Valvula Inspiratoria ligeramente abierta ??????
+                    inspValue = 110;                                // Valvula Inspiratoria ligeramente abierta ??????
                     if ( expFlow_lm + 2 < expFlowLI_lm) contPaso = Periodo;
                   break; } 
                 }                 // Fin de TriggerMode
@@ -418,6 +420,8 @@ void loop() {
       contseg++; 
       // No hace nada
       contdseg = 0;  }
+
+   digitalWrite(30, LOW);
 }
 //*************************** fin de loop *************************************
 

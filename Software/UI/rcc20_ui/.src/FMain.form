@@ -1,15 +1,15 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,133,91)
+  MoveScaled(0,0,133,88)
   Font = Font["-1"]
   Maximized = True
   { Gr1 DrawingArea
-    MoveScaled(4,27,76,31)
+    MoveScaled(4,27,76,28)
     Cached = True
   }
   { Gr2 DrawingArea
-    MoveScaled(4,58,76,31)
+    MoveScaled(4,55,76,31)
     Cached = True
   }
   { COMPort1 #SerialPort
@@ -312,9 +312,5 @@
   { BResetAlarm Button
     MoveScaled(65,13,7,12)
     Text = ("Reset\nAlarm")
-  }
-  { BCalib Button
-    MoveScaled(60,5,16,4)
-    Text = ("Calibracion")
   }
 }

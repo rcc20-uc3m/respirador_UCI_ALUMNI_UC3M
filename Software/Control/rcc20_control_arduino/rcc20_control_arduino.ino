@@ -348,7 +348,7 @@ void loop() {
                   if (Press_H2O + 0.5 <  PressLI_H2O)  contPaso = Periodo;
                 break; } 
                 case 2: {                                         // TRIGGER POR VOLUMEN  HACERLO POR DIF. ENTRE INSP Y ESP
-                  inspValue = 150;                                // Valvula Inspiratoria ligeramente abierta ??????
+                  inspValue = 115;                                // Valvula Inspiratoria ligeramente abierta ??????
                   if ( expFlow_lm + 2 < expFlowLI_lm) contPaso = Periodo;
                 break; } 
               }                 // Fin de TriggerMode

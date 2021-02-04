@@ -1,15 +1,15 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,133,91)
+  MoveScaled(0,0,133,88)
   Font = Font["-1"]
   Maximized = True
   { Gr1 DrawingArea
-    MoveScaled(4,27,76,31)
+    MoveScaled(4,27,76,30)
     Cached = True
   }
   { Gr2 DrawingArea
-    MoveScaled(4,58,76,31)
+    MoveScaled(4,57,76,30)
     Cached = True
   }
   { COMPort1 #SerialPort

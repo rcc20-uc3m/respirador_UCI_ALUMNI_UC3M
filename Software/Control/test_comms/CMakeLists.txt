@@ -30,4 +30,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/comunicaciones.cpp include/comunicaciones.h src/respirador.cpp include/respirador.h)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/comunicaciones.cpp include/comunicaciones.h src/respirador.cpp include/respirador.h include/parametros.h src/parametros.cpp src/utilidades.cpp include/utilidades.h)

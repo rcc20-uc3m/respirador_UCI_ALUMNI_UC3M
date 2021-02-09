@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[20];
-    char stringdata0[226];
+    QByteArrayData data[32];
+    char stringdata0[558];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -43,22 +43,46 @@ QT_MOC_LITERAL(8, 64, 18), // "HDLC_CommandRouter"
 QT_MOC_LITERAL(9, 83, 14), // "bytes_received"
 QT_MOC_LITERAL(10, 98, 16), // "setStatusbarText"
 QT_MOC_LITERAL(11, 115, 4), // "text"
-QT_MOC_LITERAL(12, 120, 8), // "sendData"
-QT_MOC_LITERAL(13, 129, 14), // "openSerialPort"
-QT_MOC_LITERAL(14, 144, 15), // "closeSerialPort"
-QT_MOC_LITERAL(15, 160, 9), // "writeData"
-QT_MOC_LITERAL(16, 170, 8), // "readData"
+QT_MOC_LITERAL(12, 120, 14), // "openSerialPort"
+QT_MOC_LITERAL(13, 135, 15), // "closeSerialPort"
+QT_MOC_LITERAL(14, 151, 9), // "writeData"
+QT_MOC_LITERAL(15, 161, 8), // "readData"
+QT_MOC_LITERAL(16, 170, 8), // "sendData"
 QT_MOC_LITERAL(17, 179, 11), // "handleError"
 QT_MOC_LITERAL(18, 191, 28), // "QSerialPort::SerialPortError"
-QT_MOC_LITERAL(19, 220, 5) // "error"
+QT_MOC_LITERAL(19, 220, 5), // "error"
+QT_MOC_LITERAL(20, 226, 25), // "on_Fr_plus_button_clicked"
+QT_MOC_LITERAL(21, 252, 26), // "on_Fr_minus_button_clicked"
+QT_MOC_LITERAL(22, 279, 27), // "on_Etoi_plus_button_clicked"
+QT_MOC_LITERAL(23, 307, 28), // "on_Etoi_minus_button_clicked"
+QT_MOC_LITERAL(24, 336, 26), // "on_Pip_plus_button_clicked"
+QT_MOC_LITERAL(25, 363, 27), // "on_Pip_minus_button_clicked"
+QT_MOC_LITERAL(26, 391, 27), // "on_Peep_plus_button_clicked"
+QT_MOC_LITERAL(27, 419, 28), // "on_Peep_minus_button_clicked"
+QT_MOC_LITERAL(28, 448, 25), // "on_Vt_plus_button_clicked"
+QT_MOC_LITERAL(29, 474, 26), // "on_Vt_minus_button_clicked"
+QT_MOC_LITERAL(30, 501, 27), // "on_Psop_plus_button_clicked"
+QT_MOC_LITERAL(31, 529, 28) // "on_Psop_minus_button_clicked"
 
     },
     "MainWindow\0sendDataFrame\0\0buffer\0size\0"
     "dataReceived\0data\0putChar\0HDLC_CommandRouter\0"
     "bytes_received\0setStatusbarText\0text\0"
-    "sendData\0openSerialPort\0closeSerialPort\0"
-    "writeData\0readData\0handleError\0"
-    "QSerialPort::SerialPortError\0error"
+    "openSerialPort\0closeSerialPort\0writeData\0"
+    "readData\0sendData\0handleError\0"
+    "QSerialPort::SerialPortError\0error\0"
+    "on_Fr_plus_button_clicked\0"
+    "on_Fr_minus_button_clicked\0"
+    "on_Etoi_plus_button_clicked\0"
+    "on_Etoi_minus_button_clicked\0"
+    "on_Pip_plus_button_clicked\0"
+    "on_Pip_minus_button_clicked\0"
+    "on_Peep_plus_button_clicked\0"
+    "on_Peep_minus_button_clicked\0"
+    "on_Vt_plus_button_clicked\0"
+    "on_Vt_minus_button_clicked\0"
+    "on_Psop_plus_button_clicked\0"
+    "on_Psop_minus_button_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -68,7 +92,7 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      13,   14, // methods
+      24,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -76,21 +100,32 @@ static const uint qt_meta_data_MainWindow[] = {
        2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    2,   79,    2, 0x06 /* Public */,
-       5,    1,   84,    2, 0x06 /* Public */,
+       1,    2,  134,    2, 0x06 /* Public */,
+       5,    1,  139,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       7,    1,   87,    2, 0x0a /* Public */,
-       7,    1,   90,    2, 0x0a /* Public */,
-       8,    2,   93,    2, 0x0a /* Public */,
-      10,    1,   98,    2, 0x0a /* Public */,
-      12,    0,  101,    2, 0x08 /* Private */,
-      13,    0,  102,    2, 0x08 /* Private */,
-      14,    0,  103,    2, 0x08 /* Private */,
-      15,    1,  104,    2, 0x08 /* Private */,
-      16,    0,  107,    2, 0x08 /* Private */,
-      12,    1,  108,    2, 0x08 /* Private */,
-      17,    1,  111,    2, 0x08 /* Private */,
+       7,    1,  142,    2, 0x0a /* Public */,
+       7,    1,  145,    2, 0x0a /* Public */,
+       8,    2,  148,    2, 0x0a /* Public */,
+      10,    1,  153,    2, 0x0a /* Public */,
+      12,    0,  156,    2, 0x08 /* Private */,
+      13,    0,  157,    2, 0x08 /* Private */,
+      14,    1,  158,    2, 0x08 /* Private */,
+      15,    0,  161,    2, 0x08 /* Private */,
+      16,    1,  162,    2, 0x08 /* Private */,
+      17,    1,  165,    2, 0x08 /* Private */,
+      20,    0,  168,    2, 0x08 /* Private */,
+      21,    0,  169,    2, 0x08 /* Private */,
+      22,    0,  170,    2, 0x08 /* Private */,
+      23,    0,  171,    2, 0x08 /* Private */,
+      24,    0,  172,    2, 0x08 /* Private */,
+      25,    0,  173,    2, 0x08 /* Private */,
+      26,    0,  174,    2, 0x08 /* Private */,
+      27,    0,  175,    2, 0x08 /* Private */,
+      28,    0,  176,    2, 0x08 /* Private */,
+      29,    0,  177,    2, 0x08 /* Private */,
+      30,    0,  178,    2, 0x08 /* Private */,
+      31,    0,  179,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QByteArray, QMetaType::UShort,    3,    4,
@@ -103,11 +138,22 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void, QMetaType::QString,   11,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
     QMetaType::Void, QMetaType::QByteArray,    6,
     QMetaType::Void,
     QMetaType::Void, QMetaType::QByteArray,    6,
     QMetaType::Void, 0x80000000 | 18,   19,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -124,13 +170,24 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 3: _t->putChar((*reinterpret_cast< char(*)>(_a[1]))); break;
         case 4: _t->HDLC_CommandRouter((*reinterpret_cast< QByteArray(*)>(_a[1])),(*reinterpret_cast< quint16(*)>(_a[2]))); break;
         case 5: _t->setStatusbarText((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 6: _t->sendData(); break;
-        case 7: _t->openSerialPort(); break;
-        case 8: _t->closeSerialPort(); break;
-        case 9: _t->writeData((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
-        case 10: _t->readData(); break;
-        case 11: _t->sendData((*reinterpret_cast< QByteArray(*)>(_a[1]))); break;
-        case 12: _t->handleError((*reinterpret_cast< QSerialPort::SerialPortError(*)>(_a[1]))); break;
+        case 6: _t->openSerialPort(); break;
+        case 7: _t->closeSerialPort(); break;
+        case 8: _t->writeData((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
+        case 9: _t->readData(); break;
+        case 10: _t->sendData((*reinterpret_cast< QByteArray(*)>(_a[1]))); break;
+        case 11: _t->handleError((*reinterpret_cast< QSerialPort::SerialPortError(*)>(_a[1]))); break;
+        case 12: _t->on_Fr_plus_button_clicked(); break;
+        case 13: _t->on_Fr_minus_button_clicked(); break;
+        case 14: _t->on_Etoi_plus_button_clicked(); break;
+        case 15: _t->on_Etoi_minus_button_clicked(); break;
+        case 16: _t->on_Pip_plus_button_clicked(); break;
+        case 17: _t->on_Pip_minus_button_clicked(); break;
+        case 18: _t->on_Peep_plus_button_clicked(); break;
+        case 19: _t->on_Peep_minus_button_clicked(); break;
+        case 20: _t->on_Vt_plus_button_clicked(); break;
+        case 21: _t->on_Vt_minus_button_clicked(); break;
+        case 22: _t->on_Psop_plus_button_clicked(); break;
+        case 23: _t->on_Psop_minus_button_clicked(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -181,13 +238,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 13)
+        if (_id < 24)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 24;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 13)
+        if (_id < 24)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 13;
+        _id -= 24;
     }
     return _id;
 }

@@ -55,13 +55,15 @@ OBJECTS_DIR   = ./
 SOURCES       = ../qt_comm_test/hdlc_qt.cpp \
 		../qt_comm_test/main.cpp \
 		../qt_comm_test/mainwindow.cpp \
-		../qt_comm_test/qcustomplot.cpp moc_hdlc_qt.cpp \
+		../qt_comm_test/qcustomplot.cpp \
+		../qt_comm_test/utilidades.cpp moc_hdlc_qt.cpp \
 		moc_mainwindow.cpp \
 		moc_qcustomplot.cpp
 OBJECTS       = hdlc_qt.o \
 		main.o \
 		mainwindow.o \
 		qcustomplot.o \
+		utilidades.o \
 		moc_hdlc_qt.o \
 		moc_mainwindow.o \
 		moc_qcustomplot.o
@@ -159,12 +161,16 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../qt_comm_test/qt_comm_test.pro ../qt_comm_test/hdlc_qt.h \
+		../qt_comm_test/qt_comm_test.pro ../qt_comm_test/datos.h \
+		../qt_comm_test/hdlc_qt.h \
 		../qt_comm_test/mainwindow.h \
-		../qt_comm_test/qcustomplot.h ../qt_comm_test/hdlc_qt.cpp \
+		../qt_comm_test/parametros.h \
+		../qt_comm_test/qcustomplot.h \
+		../qt_comm_test/utilidades.h ../qt_comm_test/hdlc_qt.cpp \
 		../qt_comm_test/main.cpp \
 		../qt_comm_test/mainwindow.cpp \
-		../qt_comm_test/qcustomplot.cpp
+		../qt_comm_test/qcustomplot.cpp \
+		../qt_comm_test/utilidades.cpp
 QMAKE_TARGET  = qt_comm_test
 DESTDIR       = 
 TARGET        = qt_comm_test
@@ -382,8 +388,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../qt_comm_test/hdlc_qt.h ../qt_comm_test/mainwindow.h ../qt_comm_test/qcustomplot.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../qt_comm_test/hdlc_qt.cpp ../qt_comm_test/main.cpp ../qt_comm_test/mainwindow.cpp ../qt_comm_test/qcustomplot.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../qt_comm_test/datos.h ../qt_comm_test/hdlc_qt.h ../qt_comm_test/mainwindow.h ../qt_comm_test/parametros.h ../qt_comm_test/qcustomplot.h ../qt_comm_test/utilidades.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../qt_comm_test/hdlc_qt.cpp ../qt_comm_test/main.cpp ../qt_comm_test/mainwindow.cpp ../qt_comm_test/qcustomplot.cpp ../qt_comm_test/utilidades.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../qt_comm_test/mainwindow.ui $(DISTDIR)/
 
 
@@ -464,11 +470,18 @@ main.o: ../qt_comm_test/main.cpp ../qt_comm_test/mainwindow.h
 
 mainwindow.o: ../qt_comm_test/mainwindow.cpp ../qt_comm_test/mainwindow.h \
 		ui_mainwindow.h \
-		../qt_comm_test/hdlc_qt.h
+		../qt_comm_test/qcustomplot.h \
+		../qt_comm_test/hdlc_qt.h \
+		../qt_comm_test/datos.h \
+		../qt_comm_test/parametros.h \
+		../qt_comm_test/utilidades.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../qt_comm_test/mainwindow.cpp
 
 qcustomplot.o: ../qt_comm_test/qcustomplot.cpp ../qt_comm_test/qcustomplot.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qcustomplot.o ../qt_comm_test/qcustomplot.cpp
+
+utilidades.o: ../qt_comm_test/utilidades.cpp ../qt_comm_test/utilidades.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o utilidades.o ../qt_comm_test/utilidades.cpp
 
 moc_hdlc_qt.o: moc_hdlc_qt.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_hdlc_qt.o moc_hdlc_qt.cpp

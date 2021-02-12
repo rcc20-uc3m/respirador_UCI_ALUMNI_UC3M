@@ -262,13 +262,16 @@ void setup() {
 // ******************************************** INICIO DEL BUCLE INFINITO **************************************************************
 void loop() {
 
-  tact = micros();
-  paso = tact - tant;
+  
+  
 // ******************************* LEE LA LINEA SERIE ******************************    
-  leeserie();   
+  leeserie(); 
+  tact = micros();
+  paso = tact - tant;  
 
   // ********************************************* CADA MILISEGUNDO ************************************************
-    if (paso >= 1000) {    
+    if (paso >= 1000) { 
+      tant = micros();   
       contmseg++;                                     // Incrementa el contador de milisegundos
       Periodo = 60000 / Freq;                         // Calcula el periodo
       DurEsp = PorcEsp * (Periodo / 100);             // Calcula la duracion de la espiración DurEsp
@@ -363,7 +366,7 @@ void loop() {
           if (Press_H2O < PEEP_H2O-2.0) BIT_SET(Alarma, 2); //Alarma de peep más bajo de un 2cm del set
           //if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
           if ( (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
-          myservo.write(esplimit);          // Abre la válvula espiratoria 
+          myservo.write(espflow);          // Cierra la válvula espiratoria 
           inspVol_ml = 0;
         }
      
@@ -372,7 +375,7 @@ void loop() {
             myservo.write(esplimit);          // Abre la válvula espiratoria
       }
       paso = 0;
-      tant = micros();
+      
       
  
       

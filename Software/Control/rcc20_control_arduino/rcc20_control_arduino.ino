@@ -268,10 +268,9 @@ void loop() {
   leeserie(); 
   tact = micros();
   paso = tact - tant;  
-
   // ********************************************* CADA MILISEGUNDO ************************************************
     if (paso >= 1000) { 
-      tant = micros();   
+      tant = tact;   
       contmseg++;                                     // Incrementa el contador de milisegundos
       Periodo = 60000 / Freq;                         // Calcula el periodo
       DurEsp = PorcEsp * (Periodo / 100);             // Calcula la duracion de la espiración DurEsp
@@ -351,8 +350,8 @@ void loop() {
                   if (Press_H2O + 0.5 <  PressLI_H2O)  contPaso = Periodo;
                 break; } 
                 case 2: {                                         // TRIGGER POR VOLUMEN  HACERLO POR DIF. ENTRE INSP Y ESP
-                  inspValue = 115;                                // Valvula Inspiratoria ligeramente abierta ??????
-                  if ( expFlow_lm + 2 < expFlowLI_lm) contPaso = Periodo;
+                  inspValue = 140;                                // Valvula Inspiratoria ligeramente abierta ??????
+                  if ( expFlow_lm + 5 < expFlowLI_lm) contPaso = Periodo;
                 break; } 
               }                 // Fin de TriggerMode
             }                   // Fin de si la presión está próxima a la PEEP
@@ -364,9 +363,9 @@ void loop() {
         if (contPaso >= Periodo){ 
           contPaso = 0;
           if (Press_H2O < PEEP_H2O-2.0) BIT_SET(Alarma, 2); //Alarma de peep más bajo de un 2cm del set
-          //if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
-          if ( (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
-          myservo.write(espflow);          // Cierra la válvula espiratoria 
+          if ( (operationMode == VOL_CTRL) && (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
+          //if ( (inspVol_ml < Vset_ml-10) ) BIT_SET(Alarma, 3); // Alarma de Vtidal menor de 10 ml del set
+          myservo.write(esplow);          // Cierra la válvula espiratoria 
           inspVol_ml = 0;
         }
      

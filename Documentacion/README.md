@@ -1,6 +1,6 @@
 # Documentación
 
-En este [documento](./Respirador_UCI_RCC20.pdf) se presenta la documentación que describe el respirador. 
+En este [documento](./20210505_Respirador_RCC20.pdf) se presenta la última versión de la documentación que describe el respirador. 
 
   * Objetivos de diseño 
   * Especificaciones de diseño
@@ -14,3 +14,5 @@ En este [documento](./Respirador_UCI_RCC20.pdf) se presenta la documentación qu
      * Validación técnica
      * Validación mediante modelo animal
      * Manual del usuario
+     * Lista de contribuidores
+     * Bibliografía

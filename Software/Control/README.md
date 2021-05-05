@@ -1,4 +1,4 @@
-# Software del microcontrolador
+# Firmware del microcontrolador
 
 Tenemos dos versiones. 
 
